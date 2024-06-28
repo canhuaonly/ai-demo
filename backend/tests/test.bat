@@ -1,0 +1,2 @@
+python all.py
+pause
