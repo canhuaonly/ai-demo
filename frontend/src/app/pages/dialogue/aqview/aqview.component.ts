@@ -98,17 +98,4 @@ export class AqviewComponent implements OnInit {
       }
     }, 1);
   }
-
-  test() {
-    console.log(this.ques);
-  }
-
-  async onButtonClick() {
-    this.isLoading = true; // 设置为等待状态  
-
-    // 模拟异步操作  
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    this.isLoading = false; // 异步操作完成后，恢复状态  
-  }
 }

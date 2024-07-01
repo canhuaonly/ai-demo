@@ -23,30 +23,4 @@ export class InterfaceComponent implements OnInit {
     // this.init();
   }
 
-  getList() {
-    console.log('getList click')
-    this.interfaceService.listApi({}).subscribe({
-      next: res => {
-        this.listRtn = JSON.stringify(res);
-        console.log(this.listRtn)
-      },
-      error: error => this.listRtn = JSON.stringify(error),
-      complete: () => console.log('Interface getRequired Completed!')
-    });
-  }
-
-  wenxinChat() {
-    console.log('wenxinChat click')
-    let param = {
-      content: '你是文心一言吗？'
-    }
-    this.interfaceService.wenxinApi(param).subscribe({
-      next: res => {
-        this.wenxinRtn = JSON.stringify(res);
-        console.log(this.wenxinRtn)
-      },
-      error: error => this.wenxinRtn = JSON.stringify(error),
-      complete: () => console.log('Interface getRequired Completed!')
-    });
-  }
 }
