@@ -82,6 +82,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = ""
 
     # DATABASE
+    # sqlite
     DATABASE_URI: str = (
         "sqlite:///D:/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
     )
@@ -92,6 +93,15 @@ class Settings(BaseSettings):
     DATABASE_ECHO: bool = (
         True  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
     )
+
+    # azure cosmos for NoSql
+    AZURE_ACCOUNT_HOST: str = (
+        "https://cosmosrgeastus1631952c-0d37-4c40-844ddb.documents.azure.com:443/"
+    )
+    AZURE_ACCOUNT_KEY: str = (
+        "6kSp7NnaojCsG0qqq0JtI62D5Dzg4sVOp4hleeb4HIM7yBEBNrHB0NgBlJr9hamsWBigaeykU8SbACDbfEsHWg=="
+    )
+    AZURE_DATABASE_ID: str = "comments"
 
     # logger
     LOGGER_DIR: str = "logs"  # 日志文件夹名
