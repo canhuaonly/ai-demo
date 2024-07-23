@@ -1,0 +1,69 @@
+<div class="bg-gray-200 h-full flex flex-col">
+  <div class="flex flex-1 overflow-hidden">
+    <div class="w-1/6 bg-white p-4">
+      <!-- 用户信息 -->
+      <div class="flex items-center mb-4">
+        <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+        <h3 class="font-bold">Wang</h3>
+      </div>
+      <!-- 聊天联系人列表 -->
+      <div class="flex flex-col space-y-2">
+        <div class="flex items-center p-2 bg-gray-100 rounded-lg">
+          <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+          <div>
+            <h4 class="font-bold">文心一言</h4>
+            <p class="text-gray-500 text-sm">Hey, how are you?</p>
+          </div>
+        </div>
+        <div class="flex items-center p-2 bg-gray-100 rounded-lg">
+          <img src="https://via.placeholder.com/50" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+          <div>
+            <h4 class="font-bold">Mark Doe</h4>
+            <p class="text-gray-500 text-sm">What's up?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 bg-white p-4">
+      <!-- 聊天标题栏 -->
+      <div class="flex items-center mb-4">
+        <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+        <div>
+          <h3 class="font-bold">文心一言</h3>
+          <p class="text-gray-500 text-sm">Online</p>
+        </div>
+      </div>
+      <!-- 聊天消息列表 -->
+      <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top">
+        @for (item of messageList; track $index) {
+          @if (item.user_cd === 'assistant') {
+            <div class="flex items-center">
+              <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+                <div class="bg-gray-100 text-gray-600 p-2 rounded-lg mr-24">
+                  <p>{{ item.message }}</p>
+                  <!-- <pre>
+                    <code>{{ item.message }}</code>
+                  </pre> -->
+                </div>
+            </div>
+          }
+          @else {
+            <div class="flex justify-end items-center">
+              <div class="bg-blue-600 text-white p-2 rounded-lg ml-24">
+                <p>{{ item.message }}</p>
+              </div>
+              <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full ml-2">
+            </div>
+          }
+        }
+      </div>
+      <!-- 聊天消息输入框 -->
+      <!-- <div class="flex items-center mt-4 fixed bottom-20 w-3/5"> -->
+      <div class="flex items-center mt-4 fixed bottom-20 w-3/5">
+        <input type="text" placeholder="Type your message..." class="w-full border-gray-300 border rounded-lg py-2 px-4 mr-2" [(ngModel)]="sendInput">
+        <button class="bg-blue-600 text-white py-2 px-4 rounded-lg" (click)="send()">Send</button>
+        <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

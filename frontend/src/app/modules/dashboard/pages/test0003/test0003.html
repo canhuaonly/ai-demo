@@ -1,0 +1,90 @@
+<div class="flex flex-row max-w-8xl">
+  <div class="w-52 bg-slate-50">
+
+  </div>
+  <div class="flex justify-center items-center max-w-7xl">
+      <form class="">
+          <div class="space-y-12">
+              <!-- <div class="flex justify-between">
+                  <div class="text-2xl font-bold">AI Chat</div>
+              </div> -->
+              <div class="border-0 border-gray-900/10 pb-10">
+                  <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
+                      <!-- 问答框 -->
+                      <div class="col-span-full">
+                          <div class="mt-2">
+                              <!-- box -->
+                              <div #aiBox
+                                  class="bg-gray-100 overflow-auto h-136 block w-full rounded-md border-0 py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                  <div class="p-6 mr-10">
+                                      <ul class="mt-2">
+                                          <li *ngFor="let qa of qaList">
+                                              <div class="flex gap-x-4 mb-4" *ngIf="qa.role === 'assistant'">
+                                                  <div class="flex-none w-14 h-14">
+                                                      <div
+                                                          class="w-14 h-14 bg-slate-300 rounded-full flex justify-center items-center">
+                                                          <div class="text-4xl leading-9 text-fuchsia-300">
+                                                              {{qa.role?qa.role.substr(0,1).toUpperCase(): ''}}
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <div class="grow">
+                                                      <div class="bg-white rounded-lg p-3 float-left">
+                                                          {{qa.content}}
+                                                      </div>
+                                                  </div>
+                                                  <div class="flex-none w-14 h-14"></div>
+                                              </div>
+                                              <div class="flex flex-row-reverse gap-x-4 mb-4"
+                                                  *ngIf="qa.role === 'user'">
+                                                  <div class="flex-none h-14">
+                                                      <div
+                                                          class="w-14 h-14 bg-slate-300 rounded-full flex justify-center items-center">
+                                                          <div class="text-4xl leading-9 text-fuchsia-300">
+                                                              {{qa.role?qa.role.substr(0,1).toUpperCase(): ''}}
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <div class="grow">
+                                                      <div class="bg-white rounded-lg p-3  float-right">
+                                                          {{qa.content}}
+                                                      </div>
+                                                  </div>
+                                                  <div class="flex-none w-14 h-14">
+                                                  </div>
+                                              </div>
+                                          </li>
+                                      </ul>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- 输入框 -->
+                      <div class="col-span-full">
+                          <div class="w-full h-56 border border-gray-300 rounded-md p-4">
+                              <textarea
+                                  class="w-full h-36 border-none bg-transparent resize-none focus-visible:outline-none"
+                                  (keydown)="sendOrLine($event)" placeholder=" " name="ques"
+                                  [(ngModel)]="ques"></textarea>
+                              <div class="float-end">
+                                  <!-- <button type="submit"
+                                      class="w-20 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                      [(disabled)]="isLoading" (click)="wenxinChat()">
+                                      <span *ngIf="!isLoading">Send</span>
+                                      <span *ngIf="isLoading">...</span>
+                                  </button> -->
+                                  <button type="submit"
+                                      class="w-20 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                      (click)="wenxinChat()">
+                                      <span *ngIf="!isLoading">Send</span>
+                                      <span *ngIf="isLoading">...</span>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>

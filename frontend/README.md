@@ -1,27 +1,80 @@
-# Frontend
+<p align="center">
+    <img src="src/assets/preview/logo.png" width="150">
+</p>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
+<p align="center">
+    <a href="https://github.com/luciano-work/angular-tailwind/stargazers">
+        <img height= "24" src="https://img.shields.io/github/stars/luciano-work/angular-tailwind?colorA=1e1e28&colorB=c9cbff&style=for-the-badge">
+    </a>
+    <a href="https://github.com/luciano-work/angular-tailwind/issues">
+        <img height= "24" src="https://img.shields.io/github/issues/luciano-work/angular-tailwind?colorA=1e1e28&colorB=f7be95&style=for-the-badge">
+    </a>
+    <a href="https://github.com/luciano-work/angular-tailwind/contributors">
+        <img height= "24" src="https://img.shields.io/github/contributors/luciano-work/angular-tailwind?colorA=1e1e28&colorB=b1e1a6&style=for-the-badge">
+    </a>
+</p>
 
-## Development server
+#### Motivation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+For me, the best strategy for learning new skills is to practice. I have created this project to learn more about Tailwind CSS using my favorite framework (Angular). I have to tell you, Tailwind is amazing!
 
-## Code scaffolding
+<b><img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" width="14"/> The project is not finished yet!</b>
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+See [Demo](https://at.lanno.dev) page.
 
-## Build
+<p>
+  <img alt="Preview" src="src/assets/preview/preview.png">
+</p>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+#### Versions
 
-## Running unit tests
+<a href="https://angular.io"><img height= "24" src= "https://img.shields.io/badge/Angular 17-DD0031?style=for-the-badge&logo=angular&logoColor=white"></a> <a href="https://tailwindcss.com"><img height= "24" src= "https://img.shields.io/badge/Tailwind 3-0ea5e9?style=for-the-badge&logo=tailwind-css&logoColor=white"></a>
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#### Features
 
-## Running end-to-end tests
+- [x] Sidebar
+- [x] Dark Theme
+- [x] Navbar
+- [x] Footer
+- [x] Auth Module
+- [x] Dashboard Module
+- [x] Standalone components
+- [x] Angular Signals
+- [ ] User Module
+- [ ] Guards
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+#### Commands
 
-## Further help
+| command                   | What it does?                                 |
+| ------------------------- | :-------------------------------------------- |
+| `npm start`               | Starts the server in dev mode                 |
+| `npm run lint`            | Runs ESLint on project                        |
+| `npm run prettier`        | Runs prettier on entire src folder            |
+| `npm run prettier:verify` | Runs prettier-check and throws error if fails |
+| `npm run prettier:staged` | Runs prettier on only staged (changed) files  |
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+#### Dependencies
+
+| Package            | What it does?                                                                               | Link                                                   |
+| ------------------ | :------------------------------------------------------------------------------------------ | :----------------------------------------------------- |
+| `angular-svg-icon` | Provides a means to inline SVG files to allow for them to be easily styled by CSS and code. | [Here](https://www.npmjs.com/package/angular-svg-icon) |
+| `apexcharts`       | Modern & Interactive Open-source Charts                                                     | [Here](https://www.npmjs.com/package/apexcharts)       |
+| `ng-apexcharts`    | Angular wrapper for ApexCharts to build interactive visualizations in Angular.              | [Here](https://www.npmjs.com/package/ng-apexcharts)    |
+
+#### Dev Dependencies
+
+| Package                       | What it does?                                                                                            | Link                                                              |
+| ----------------------------- | :------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `prettier`                    | An opinionated code formatter                                                                            | [Here](https://www.npmjs.com/package/prettier)                    |
+| `prettier-plugin-tailwindcss` | A Prettier plugin for Tailwind CSS that automatically sorts classes based on our recommended class order | [Here](https://www.npmjs.com/package/prettier-plugin-tailwindcss) |
+| `tailwind-scrollbar`          | Tailwind plugin for styling scrollbars.                                                                  | [Here](https://www.npmjs.com/package/tailwind-scrollbar)          |
+| `tailwindcss`                 | A utility-first CSS framework for rapidly building custom user interfaces.                               | [Here](https://www.npmjs.com/package/tailwindcss)                 |
+
+#### Icons and Patterns
+
+This project use [Hero Icons](https://heroicons.com/) and [Hero Patterns](https://heropatterns.com/)
+
+#### Disclaimer
+
+The Tailwind name and logos are trademarks of Tailwind Labs Inc.
+The Angular name and logos are trademarks of Google.

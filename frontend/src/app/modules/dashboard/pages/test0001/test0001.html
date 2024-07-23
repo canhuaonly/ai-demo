@@ -1,0 +1,61 @@
+<div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+  <p class="text-green-500">乌！蒙！山！连！着！山！外！山！</p>
+  <div class="space-y-3 text-left">
+    <div class="relative">
+      <input type="text" id="email" class="peer block" placeholder=" " />
+      <label
+        for="email"
+        class="absolute top-2 left-1 z-10 origin-[0] -translate-y-4 scale-95 transform bg-white px-2 text-sm text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 peer-focus:text-primary-600 dark:bg-night-700 dark:text-night-200">
+        Email address
+      </label>
+    </div>
+  </div>
+  <br>
+  <div class="flex justify-center items-center bg-blue-500">
+    <p class="text-red-500">月！光！洒！下！了！响！水！滩！</p>
+  </div>
+  <br>
+  @if (isPoetry1) {
+    <p class="text-green-500">有！没！有！人！能！告！诉！我！</p>
+  }
+  @else {
+    <p class="text-green-500">忘词了！</p>
+  }
+  <br>
+  @for (item of list1; track $index) {
+    <p class="text-green-500">{{ $index + 1 }} . {{ item }}</p>
+  }
+  <br>
+  <div class="md:col-span-2">
+    <input type="text" class="px-4 py-4 w-80" [(ngModel)]="head.text1">
+    <br>
+    <br>
+    <button (click)="getNext()">get next</button>
+    <br>
+    <br>
+    @if (isPoetry2) {
+      <p class="text-green-500">{{head.text2}}</p>
+    }
+  </div>
+  <br>
+  @for (item of list2; track $index) {
+    <p class="text-green-500">{{ $index + 1 }} . {{ item }}</p>
+  }
+  <br>
+  <div class="space-y-3 text-left absolute bottom-20">
+    <div class="relative">
+      <input type="text" id="email" class="peer block w-80 bg-test-color" placeholder=" " [(ngModel)]="head.text3" />
+      <label
+        for="email"
+        class="absolute top-2 left-1 z-10 origin-[0] -translate-y-4 scale-95 transform bg-test-color px-2 text-sm text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 peer-focus:text-primary-600 dark:bg-night-700 dark:text-night-200">
+        lyric
+      </label>
+    </div>
+    <button class="px-4 py-2 bg-green-500 text-white rounded shadow" (click)="addLyric()">Add Lyric</button>
+  </div>
+  <br>
+  <div class="mx-auto px-4 py-4 sm:px-8 lg:container bg-pink-500 text-center">
+    今天是个好日子
+  </div>
+  <br>
+</div>
