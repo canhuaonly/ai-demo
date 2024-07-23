@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from app.api.routes import interface
 from app.api.routes import dialogue_ctx
 from app.api.routes import cosmos_learn_v1
+from app.api.ai import wenxin_api
 
 app_router = APIRouter()
 
@@ -17,4 +18,7 @@ app_router.include_router(
 )
 app_router.include_router(
     cosmos_learn_v1.router, prefix="/cosmos_learn_v1", tags=["cosmos_learn_v1"]
+)
+app_router.include_router(
+    wenxin_api.router, prefix="/ai", tags=["ai"]
 )
