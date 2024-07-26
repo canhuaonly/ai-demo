@@ -7,7 +7,7 @@ it("test a + b = 3?", () => {
 
 
 it("测试用例ADD2", () => {
-  expect(add(2, 2)).toBe(3);
+  expect(add(2, 3)).toBe(5);
 });
 
 it("测试用例ADD3", () => {
