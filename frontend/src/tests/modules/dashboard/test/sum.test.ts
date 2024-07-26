@@ -10,3 +10,6 @@ it("测试用例ADD2", () => {
   expect(add(2, 2)).toBe(3);
 });
 
+it("测试用例ADD3", () => {
+  expect(add(2, 2)).toBe(4);
+});
