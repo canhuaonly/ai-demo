@@ -13,3 +13,8 @@ it("测试用例ADD2", () => {
 it("测试用例ADD3", () => {
   expect(add(2, 2)).toBe(4);
 });
+
+
+it("测试用例ADD4", () => {
+  expect(add(2, 4)).toBe(4);
+});
