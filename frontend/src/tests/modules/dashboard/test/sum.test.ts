@@ -16,5 +16,5 @@ it("测试用例ADD3", () => {
 
 
 it("测试用例ADD4", () => {
-  expect(add(2, 4)).toBe(4);
+  expect(add(2, 4)).toBe(6);
 });
