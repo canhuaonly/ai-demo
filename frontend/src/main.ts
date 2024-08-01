@@ -6,6 +6,7 @@ import { environment } from './environments/environment'
 import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
 
 if (environment.production) {
     enableProdMode()
@@ -16,7 +17,7 @@ if (environment.production) {
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [importProvidersFrom(BrowserModule, AppRoutingModule)]
+    providers: [provideHttpClient(), importProvidersFrom(BrowserModule, AppRoutingModule, HttpClient)]
 })
     .catch((err) => console.error(err))
 
