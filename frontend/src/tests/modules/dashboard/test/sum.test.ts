@@ -18,3 +18,8 @@ it("测试用例ADD3", () => {
 it("测试用例ADD4", () => {
   expect(add(2, 4)).toBe(6);
 });
+
+it("测试用例ADD5", () => {
+  expect(add(2, 5)).toBe(7);
+});
+
