@@ -36,6 +36,4 @@ def get_database():
         return get_client().get_database_client(settings.AZURE_DATABASE_ID)
 
 
-# TODO 数据库未连接
-# database = get_database()
-database = None
+database = get_database()
