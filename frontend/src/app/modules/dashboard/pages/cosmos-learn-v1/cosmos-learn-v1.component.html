@@ -1,0 +1,58 @@
+<!-- 
+# [C1] 创建/编辑用户 createUsers
+# [Q1] 检索用户 searchUsers
+# [C2] 创建/编辑帖子 createPosts
+# [Q2] 检索帖子 searchPosts
+# [Q3] 以短格式列出用户的帖子 searchUserPosts
+# [C3] 创建评论 createComments
+# [Q4] 列出帖子的评论 searchPostComments
+# [C4] 为帖子点赞 createLikes
+# [Q5] 列出帖子的点赞数 searchPostLikes
+# [Q6] 以短格式列出最近创建的 x 个帖子（源）searchRecentPosts 
+-->
+<div class="flex flex-col">
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="createUsers()">创建/编辑用户</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchUsers()">检索用户</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="createPosts()">创建/编辑帖子</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchPosts()">检索帖子</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchUserPosts()">以短格式列出用户的帖子</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="createComments()">创建评论</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchPostComments()">列出帖子的评论</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="createLikes()">为帖子点赞</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchPostLikes()">列出帖子的点赞数</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchRecentPosts()">以短格式列出最近创建的 x 个帖子（源）</button>
+    </div>
+    <div class="flex gap-x-4 mb-4">
+        <button class="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+            (click)="searchUser1Posts()">查询user1用户的帖子</button>
+    </div>
+</div>
