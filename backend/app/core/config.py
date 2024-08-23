@@ -94,12 +94,10 @@ class Settings(BaseSettings):
         True  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
     )
 
-    # azure cosmos for NoSql
-    AZURE_ACCOUNT_HOST: str = (
-        "https://cosmosrgeastus1631952c-0d37-4c40-844ddb.documents.azure.com:443/"
-    )
+    # azure cosmos for NoSql # https://localhost:8081/_explorer/index.html
+    AZURE_ACCOUNT_HOST: str = "https://localhost:8081"
     AZURE_ACCOUNT_KEY: str = (
-        "6kSp7NnaojCsG0qqq0JtI62D5Dzg4sVOp4hleeb4HIM7yBEBNrHB0NgBlJr9hamsWBigaeykU8SbACDbfEsHWg=="
+        "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
     )
     AZURE_DATABASE_ID: str = "comments"
 
