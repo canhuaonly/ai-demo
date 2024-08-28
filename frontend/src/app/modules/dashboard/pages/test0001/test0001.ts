@@ -20,7 +20,7 @@ export class Test0001Component implements OnInit {
     isPoetry2: boolean = false
 
     head = {
-        text1: '你！来！过！年！华！被！传！说！',
+        text1: '1122333',
         text2: 'xxx',
         text3: ''
     }
@@ -29,9 +29,9 @@ export class Test0001Component implements OnInit {
 
     ngOnInit() {
         this.list1 = [
-            '苍！天！对！你！在！呼！唤！',
-            '一！座！山！翻！过！一！条！河！',
-            '千！山！万！水！永！不！寂！寞！'
+            '4455666',
+            '7788999',
+            '1010jjqqq'
         ]
 
         this.list2 = []

@@ -4,24 +4,19 @@
       <!-- 用户信息 -->
       <div class="flex items-center mb-4">
         <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-        <h3 class="font-bold">Wang</h3>
+        <h3 class="font-bold">{{ userNm }}</h3>
       </div>
       <!-- 聊天联系人列表 -->
       <div class="flex flex-col space-y-2">
-        <div class="flex items-center p-2 bg-gray-100 rounded-lg">
-          <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-          <div>
-            <h4 class="font-bold">文心一言</h4>
-            <p class="text-gray-500 text-sm">Hey, how are you?</p>
+        @for (item of contactsList; track $index) {
+          <div class="flex items-center p-2 bg-gray-100 rounded-lg">
+            <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+            <div>
+              <h4 class="font-bold">{{ item.contactNm }}</h4>
+              <p class="text-gray-500 text-sm">{{ item.lastMsg }}</p>
+            </div>
           </div>
-        </div>
-        <div class="flex items-center p-2 bg-gray-100 rounded-lg">
-          <img src="https://via.placeholder.com/50" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-          <div>
-            <h4 class="font-bold">Mark Doe</h4>
-            <p class="text-gray-500 text-sm">What's up?</p>
-          </div>
-        </div>
+        }
       </div>
     </div>
     <div class="flex-1 p-4">
@@ -34,7 +29,7 @@
         </div>
       </div>
       <!-- 聊天消息列表 -->
-      <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top">
+      <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top p-4">
         @for (item of messageList; track $index) {
           @if (item.user_cd === 'assistant') {
             <div class="flex items-center">

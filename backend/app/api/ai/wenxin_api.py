@@ -5,10 +5,11 @@ import sys
 from typing import List
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.ai.database import SessionLocal
-from app.api.ai.entity import Wenxin
+from app.api.ai.entity import Wenxin, User
 from app.api.ai.wenxin import main
 from app.api.ai import models
 
@@ -34,6 +35,27 @@ async def get_lyric(param: str):
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     messages = db.query(models.Wenxin).offset(skip).limit(limit).all()
     return messages
+
+
+@router.get("/getUser", response_model=List[User])
+def get_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = db.query(models.User).offset(skip).limit(limit).all()
+    return users
+
+
+@router.get("/getContactsList", response_model=List[User])
+def get_contacts_list(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+
+    # db.execute("SELECT U.user_nm FROM USER U")
+
+    sql1 = text("SELECT U.user_nm FROM USER U")
+
+    list = db.execute(sql1)
+
+    for row in list :
+      print(row._data)
+
+    return list
 
 
 @router.post("/sendMessage")
@@ -76,11 +98,11 @@ def create_wenxin(db: Session, wenxin: Wenxin):
 
     db_user = db.query(models.Wenxin).order_by(models.Wenxin.wenxin_id.desc()).first()
     if db_user:
-        wenxin.order = db_user.order + 1
+        wenxin.message_order = db_user.message_order + 1
     else:
-        wenxin.order = 1
+        wenxin.message_order = 1
 
-    db_wenxin = models.Wenxin(user_cd=wenxin.user_cd, user_nm=wenxin.user_nm, order=wenxin.order, message=wenxin.message)
+    db_wenxin = models.Wenxin(user_cd=wenxin.user_cd, user_nm=wenxin.user_nm, message_order=wenxin.message_order, message=wenxin.message)
     # add
     db.add(db_wenxin)
     # commit

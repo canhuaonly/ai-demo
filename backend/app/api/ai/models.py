@@ -5,7 +5,7 @@ from app.api.ai.database import Base
 
 
 class User(Base):
-    __tablename__ = "b_user"
+    __tablename__ = "user"
 
     user_id = Column(Integer, primary_key=True, index=True)
     user_cd = Column(String, unique=True, index=True)
@@ -23,7 +23,7 @@ class Wenxin(Base):
     wenxin_id = Column(Integer, primary_key=True, index=True)
     user_cd = Column(String, unique=True, index=True)
     user_nm = Column(String)
-    order = Column(Integer)
+    message_order = Column(Integer)
     message = Column(String)
 
     def to_dict(self):

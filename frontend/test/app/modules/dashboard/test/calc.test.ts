@@ -4,7 +4,6 @@ it("test a + b = 3?", () => {
   expect(add(1, 2)).toBe(3);
 });
 
-
 it("test a - b = 5?", () => {
   expect(subtract(8, 3)).toBe(5);
 });
@@ -12,7 +11,6 @@ it("test a - b = 5?", () => {
 it("test a * b = 8?", () => {
   expect(multiply(2, 4)).toBe(8);
 });
-
 
 it("test a / b = 2?", () => {
   expect(divide(8, 4)).toBe(2);
