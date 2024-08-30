@@ -28,3 +28,20 @@ class User_session(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Select1(BaseModel):
+    user_session_aka: str
+    message: str
+
+    class Config:
+        orm_mode = True
+
+
+class Select2():
+    def __init__(self, user_session_aka, message):
+        self.user_session_aka = user_session_aka
+        self.message = message
+
+    class Config:
+        orm_mode = True

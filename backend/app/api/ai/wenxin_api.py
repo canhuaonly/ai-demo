@@ -2,18 +2,19 @@ import io
 import json
 import sqlite3
 import sys
-from typing import List
+from typing import Any, List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import text
+from sqlalchemy import Row, Sequence, text
 from sqlalchemy.orm import Session
 
 from app.api.ai.database import SessionLocal
-from app.api.ai.entity import Wenxin, User
+from app.api.ai.entity import Wenxin, User, Select1, Select2
 from app.api.ai.wenxin import main
 from app.api.ai import models
 
 router = APIRouter()
+
 
 def get_db():
     try:
@@ -43,24 +44,37 @@ def get_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users
 
 
-@router.get("/getContactsList", response_model=List[User])
-def get_contacts_list(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+@router.get("/getContactsList", response_model=List[Select1])
+def get_contacts_list(db: Session = Depends(get_db)):
+    select_sql = text("select * from (SELECT us.user_session_aka, MSG.message FROM user_session us INNER JOIN user u "
+                      "ON u.user_id = us.user_id INNER JOIN ( SELECT W.message, W.user_session_id FROM wenxin W ORDER "
+                      "BY W.message_order DESC LIMIT 1 ) MSG ON MSG.user_session_id = US.user_session_id) usam")
 
-    # db.execute("SELECT U.user_nm FROM USER U")
+    select_list = db.execute(select_sql)
 
-    sql1 = text("SELECT U.user_nm FROM USER U")
+    contact_list = select_list.fetchall()
 
-    list = db.execute(sql1)
+    result2 = [
+        {"user_session_aka": context.user_session_aka, "message": context.message}
+        for context in contact_list
+    ]
 
-    for row in list :
-      print(row._data)
+    result_list: List[Select1] = []
 
-    return list
+    for row in contact_list:
+        # print(row._mapping.user_session_aka)
+        # print(row._data)
+        # result = Select1(row._mapping.user_session_aka, row._mapping.message)
+        # result.user_session_aka = row._mapping.user_session_aka
+        # result.message = row._mapping.message
+        # result: Select2 = Select2(row._mapping.user_session_aka, row._mapping.message)
+        result_list.append(Select2(row._mapping.user_session_aka, row._mapping.message))
+
+    return result2
 
 
 @router.post("/sendMessage")
 async def send_message(wenxin: Wenxin):
-
     db: Session = next(get_db())
     me_wenxin = create_wenxin(db=db, wenxin=wenxin)
 
