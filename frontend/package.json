@@ -44,6 +44,7 @@
     "@tailwindcss/typography": "^0.5.4",
     "angular-svg-icon": "^13.0.0",
     "apexcharts": "^3.35.3",
+    "axios": "^1.7.5",
     "ng-apexcharts": "^1.8.0",
     "ngx-markdown": "^17.2.1",
     "rxjs": "~7.4.0",
