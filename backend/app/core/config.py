@@ -84,20 +84,18 @@ class Settings(BaseSettings):
     # DATABASE
     # sqlite
     DATABASE_URI: str = (
-        "sqlite://./db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
+        "sqlite:///D:/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
     )
     ASYNC_DATABASE_URI: str = (
-        "sqlite+aiosqlite:///D:/AI/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
+        "sqlite+aiosqlite:///D:/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
     )
     # DATABASE_URI: str = Field(..., env="MYSQL_DATABASE_URI")  # MySQL(异步)
     DATABASE_ECHO: bool = (
         True  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
     )
 
-    # azure cosmos for NoSql
-    AZURE_ACCOUNT_HOST: str = (
-        "https://localhost:8081"
-    )
+    # azure cosmos for NoSql # https://localhost:8081/_explorer/index.html
+    AZURE_ACCOUNT_HOST: str = "https://localhost:8081"
     AZURE_ACCOUNT_KEY: str = (
         "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
     )

@@ -12,26 +12,39 @@ export class Test0002Service {
     constructor(private http: HttpClient) {}
 
     // 获取当前用户
-    getUser(): Observable<any> {
-        return this.http.get<any>('/api/ai/getUser')
+    async getUser(): Promise<any> {
+        let res: Observable<any> = this.http.get<any>('/api/ai/getUser')
+
+        return new Promise((resolve) => {
+            res.subscribe({ next: res => { resolve(res); } });
+          });
     }
 
     // 获取联系人列表
-    getContactsList(): Observable<any> {
-        return this.http.get<any>('/api/ai/getContactsList')
+    async getContactsList(): Promise<any> {
+        let res: Observable<any> = this.http.get<any>('/api/ai/getContactsList')
+
+        return new Promise((resolve) => {
+            res.subscribe({ next: res => { resolve(res) } });
+        });
     }
 
     // 获取最近聊天内容
-    getMessageList(): Observable<any> {
-        return this.http.get<any>('/api/ai/wenxin')
+    async getMessageList(): Promise<any> {
+        let res: Observable<any> = this.http.get<any>('/api/ai/wenxin')
+
+        return new Promise((resolve) => {
+            res.subscribe({ next: res => {resolve(res) } });
+          });
     }
     
-    sendMessage(messageList: any): Observable<any> {
-        return this.http.post<any>('/api/ai/sendMessage', messageList)
-    }
-    
-    sendSingleMessage(entity: any): Observable<any> {
-        return this.http.post<any>('/api/ai/sendMessage', entity)
+    // 发送消息并取得回复
+    async sendSingleMessage(entity: any): Promise<any> {
+        let res: Observable<any> = this.http.post<any>('/api/ai/sendMessage', entity)
+
+        return new Promise((resolve) => {
+            res.subscribe({ next: res => { resolve(res) } });
+        });
     }
 }
 

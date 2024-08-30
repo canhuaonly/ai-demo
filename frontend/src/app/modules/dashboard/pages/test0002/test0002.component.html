@@ -11,9 +11,9 @@
         @for (item of contactsList; track $index) {
           <div class="flex items-center p-2 bg-gray-100 rounded-lg">
             <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-            <div>
-              <h4 class="font-bold">{{ item.contactNm }}</h4>
-              <p class="text-gray-500 text-sm">{{ item.lastMsg }}</p>
+            <div class="overflow-hidden">
+              <h4 class="font-bold">{{ item.user_session_aka }}</h4>
+              <p class="text-gray-500 text-sm whitespace-nowrap">{{ item.message }}</p>
             </div>
           </div>
         }

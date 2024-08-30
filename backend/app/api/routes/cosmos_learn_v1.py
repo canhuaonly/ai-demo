@@ -69,11 +69,11 @@ async def create_users():
     container = database.get_container_client("users")
     try:
         # 插入数据
-        for i in range(1, 100 + 1):
+        for i in range(1, 10000 + 1):
             user = get_user(f"user{i}", f"username{i}")
             container.create_item(body=user)
         # 返回数据
-        return "数据插入成功100条"
+        return "数据插入成功10000条"
     except Exception as e:
         return "数据插入失败" + str(e)
 
