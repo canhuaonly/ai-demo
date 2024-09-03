@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import axios from 'axios';
 
 @Injectable({
     providedIn: 'root'
@@ -25,4 +26,23 @@ export function fetchData() {
         resolve(1000);
         }, 1000);
     });
+}
+
+// 真实的请求
+export function getData() {
+    // success: true
+    return axios.get("http://www.dell-lee.com/react/api/demo.json");
+}
+
+// 模拟的请求
+export function fetchData2() {
+    return Promise.resolve({
+      success: true
+    });
+}
+
+// temp
+export const all = async () => {
+    const resp = await axios.get('xxxxxxx');
+    return resp.data;
 }

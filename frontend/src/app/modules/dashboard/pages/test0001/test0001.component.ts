@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { FormsModule } from '@angular/forms';
-import { Test0001Service } from "./test0001.api";
+import { Test0001Service } from "./test0001.component.api";
 
 @Component({
     selector: 'app-podcast',
-    templateUrl: './test0001.html',
-    styleUrl: './test0001.css',
+    templateUrl: './test0001.component.html',
+    styleUrl: './test0001.component.css',
     standalone: true,
     imports: [
         FormsModule,

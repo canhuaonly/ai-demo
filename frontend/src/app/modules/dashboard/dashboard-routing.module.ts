@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { NftComponent } from './pages/nft/nft.component';
 import { PodcastComponent } from './pages/podcast/podcast.component';
-import { Test0001Component } from './pages/test0001/test0001';
+import { Test0001Component } from './pages/test0001/test0001.component';
 import { Test0002Component } from './pages/test0002/test0002.component';
 import { Test0003Component } from './pages/test0003/test0003';
 import { CosmosLearnV1Component } from './pages/cosmos-learn-v1/cosmos-learn-v1.component';
