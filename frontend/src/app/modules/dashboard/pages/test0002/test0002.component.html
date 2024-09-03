@@ -4,12 +4,12 @@
       <!-- 用户信息 -->
       <div class="flex items-center mb-4">
         <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-        <h3 class="font-bold">{{ userNm }}</h3>
+        <h3 class="font-bold" id="userNm">{{ userNm }}</h3>
       </div>
       <!-- 聊天联系人列表 -->
-      <div class="flex flex-col space-y-2">
+      <div class="flex flex-col space-y-2" id="contactsList">
         @for (item of contactsList; track $index) {
-          <div class="flex items-center p-2 bg-gray-100 rounded-lg">
+          <div class="flex items-center p-2 bg-gray-100 rounded-lg cursor-pointer" (click)="changeTab($index)">
             <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
             <div class="overflow-hidden">
               <h4 class="font-bold">{{ item.user_session_aka }}</h4>
@@ -29,7 +29,7 @@
         </div>
       </div>
       <!-- 聊天消息列表 -->
-      <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top p-4">
+      <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top p-4" id="messageList">
         @for (item of messageList; track $index) {
           @if (item.user_cd === 'assistant') {
             <div class="flex items-center">
@@ -55,9 +55,10 @@
       <!-- 聊天消息输入框 -->
       <!-- <div class="flex items-center mt-4 fixed bottom-20 w-3/5"> -->
       <div class="flex items-center mt-4 fixed bottom-20 w-3/5">
-        <input type="text" placeholder="Type your message..." class="w-full border-gray-300 border rounded-lg py-2 px-4 mr-2" [(ngModel)]="sendInput">
-        <button class="bg-blue-600 text-white py-2 px-4 rounded-lg" (click)="send()">Send</button>
-        <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg">Cancel</button>
+        <input type="text" placeholder="Type your message..." class="w-full border-gray-300 border rounded-lg py-2 px-4 mr-2" [(ngModel)]="sendInput" id="sendInput">
+        <button class="bg-blue-600 text-white py-2 px-4 rounded-lg" (click)="send()" id="send">Send</button>
+        <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="interrupt()" id="interrupt">Interrupt</button>
+        <button class="bg-green-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="newChats()" id="newChats">New</button>
       </div>
     </div>
   </div>
