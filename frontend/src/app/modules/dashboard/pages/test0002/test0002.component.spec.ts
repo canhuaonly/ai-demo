@@ -618,6 +618,4 @@ describe('测试画面: 0002', () => {
     expect(messageListDiv.childElementCount).toBe(0);
   });
 
-
-
 });

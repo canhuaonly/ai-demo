@@ -99,7 +99,7 @@ class Settings(BaseSettings):
     AZURE_ACCOUNT_KEY: str = (
         "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
     )
-    AZURE_DATABASE_ID: str = "comments"
+    AZURE_DATABASE_ID: str = "ai_chats"
 
     # logger
     LOGGER_DIR: str = "logs"  # 日志文件夹名

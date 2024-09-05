@@ -1,22 +1,25 @@
-import io
+"""Module providingFunction printing python version."""
 import json
-import sqlite3
-import sys
-from typing import Any, List
+from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import Row, Sequence, text
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.ai.database import SessionLocal
-from app.api.ai.entity import Wenxin, User, Select1, Select2
+from app.api.ai.entity import Wenxin, User, Select1
 from app.api.ai.wenxin import main
 from app.api.ai import models
+from app.cosmos import database
 
 router = APIRouter()
 
+################################### 👇👇👇 SQLite3 的 CRUD API 👇👇👇 #####################################
 
 def get_db():
+    """
+    This is test func
+    """
     try:
         db = SessionLocal()
         yield db
@@ -26,29 +29,64 @@ def get_db():
 
 @router.get("/getLyric/{param}")
 async def get_lyric(param: str):
+    """
+    This is test func
+    """
     if param == "aaa":
-        return {"message": f"百！里！杜！鹃！不！凋！落！"}
+        return {"message": "百！里！杜！鹃！不！凋！落！"}
     else:
-        return {"message": f"error: time out"}
+        return {"message": "error: time out"}
 
 
 @router.get("/wenxin", response_model=List[Wenxin])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    This is test func
+    """
     messages = db.query(models.Wenxin).offset(skip).limit(limit).all()
     return messages
 
 
 @router.get("/getUser", response_model=List[User])
 def get_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    This is test func
+    """
     users = db.query(models.User).offset(skip).limit(limit).all()
     return users
 
 
 @router.get("/getContactsList", response_model=List[Select1])
 def get_contacts_list(db: Session = Depends(get_db)):
-    select_sql = text("select * from (SELECT us.user_session_aka, MSG.message FROM user_session us INNER JOIN user u "
-                      "ON u.user_id = us.user_id INNER JOIN ( SELECT W.message, W.user_session_id FROM wenxin W ORDER "
-                      "BY W.message_order DESC LIMIT 1 ) MSG ON MSG.user_session_id = US.user_session_id) usam")
+    """
+    This is test func
+    """
+    select_sql = text("""
+      SELECT
+        * 
+      FROM
+        ( 
+          SELECT
+            US.user_session_aka
+            , MSG.message 
+          FROM
+            user_session US 
+            INNER JOIN user U 
+              ON U.user_id = US.user_id 
+            INNER JOIN ( 
+              SELECT
+                W.message
+                , W.user_session_id 
+              FROM
+                wenxin W 
+              ORDER BY
+                W.message_order DESC 
+              LIMIT
+                1
+            ) MSG 
+              ON MSG.user_session_id = US.user_session_id
+        ) usam
+    """)
 
     select_list = db.execute(select_sql)
 
@@ -59,22 +97,26 @@ def get_contacts_list(db: Session = Depends(get_db)):
         for context in contact_list
     ]
 
-    result_list: List[Select1] = []
+    # 另一种写法
+    # result_list: List[Select1] = []
 
-    for row in contact_list:
-        # print(row._mapping.user_session_aka)
-        # print(row._data)
-        # result = Select1(row._mapping.user_session_aka, row._mapping.message)
-        # result.user_session_aka = row._mapping.user_session_aka
-        # result.message = row._mapping.message
-        # result: Select2 = Select2(row._mapping.user_session_aka, row._mapping.message)
-        result_list.append(Select2(row._mapping.user_session_aka, row._mapping.message))
+    # for row in contact_list:
+    #     # print(row._mapping.user_session_aka)
+    #     # print(row._data)
+    #     # result = Select1(row._mapping.user_session_aka, row._mapping.message)
+    #     # result.user_session_aka = row._mapping.user_session_aka
+    #     # result.message = row._mapping.message
+    #     # result: Select2 = Select2(row._mapping.user_session_aka, row._mapping.message)
+    #     result_list.append(Select2(row._mapping.user_session_aka, row._mapping.message))
 
     return result2
 
 
 @router.post("/sendMessage")
 async def send_message(wenxin: Wenxin):
+    """
+    This is test func
+    """
     db: Session = next(get_db())
     me_wenxin = create_wenxin(db=db, wenxin=wenxin)
 
@@ -88,8 +130,8 @@ async def send_message(wenxin: Wenxin):
             "content": message.message
         })
 
-    text = main(messages)
-    data = json.loads(text)
+    text_contact = main(messages)
+    data = json.loads(text_contact)
 
     result_message = data['result']
 
@@ -102,12 +144,15 @@ async def send_message(wenxin: Wenxin):
     print(it_wenxin.user_cd + ': ' + it_wenxin.message)
 
     return {
-        "status": f"666",
+        "status": "666",
         "entity": return_messages,
     }
 
 
 def create_wenxin(db: Session, wenxin: Wenxin):
+    """
+    This is test func
+    """
     wenxin.wenxin_id = None
 
     db_user = db.query(models.Wenxin).order_by(models.Wenxin.wenxin_id.desc()).first()
@@ -116,7 +161,12 @@ def create_wenxin(db: Session, wenxin: Wenxin):
     else:
         wenxin.message_order = 1
 
-    db_wenxin = models.Wenxin(user_cd=wenxin.user_cd, user_nm=wenxin.user_nm, message_order=wenxin.message_order, message=wenxin.message)
+    db_wenxin = models.Wenxin(
+        user_cd=wenxin.user_cd,
+        user_nm=wenxin.user_nm,
+        message_order=wenxin.message_order,
+        message=wenxin.message
+    )
     # add
     db.add(db_wenxin)
     # commit
