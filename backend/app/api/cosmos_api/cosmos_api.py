@@ -155,3 +155,34 @@ def cosmos_send_message(param: HttpParam):
         "status": "666",
         "entity": user,
     }
+
+
+@router.post("/update_contact_nm")
+def cosmos_update_contact_nm(param: HttpParam):
+    """
+    更新会话名称
+    """
+
+    print(param)
+
+    # 连接到容器
+    container = database.get_container_client("users")
+
+    # 查询数据
+    current_user = list(container.query_items(
+        query="SELECT * FROM users u WHERE u.userId = 'user1' AND u.id = @id",
+        parameters=[{"name": "@id", "value": param.chatId}],
+        enable_cross_partition_query=True,
+    ))[0]
+
+    print(current_user)
+
+    read_item = container.read_item(item=current_user, partition_key=param.user)
+    read_item['userNm'] = param.data
+    response: chats_user = container.replace_item(item=read_item, body=read_item)
+
+    print(response)
+    return {
+        "status": "666",
+        "entity": response,
+    }

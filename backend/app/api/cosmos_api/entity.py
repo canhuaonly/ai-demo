@@ -3,26 +3,26 @@
 from pydantic import BaseModel
 
 
-def chats_user(item_id, item_cd, item_nm):
+def chats_user(item_id, chat_id, item_cd, item_nm):
     """
     获取用户
     """
     user = {
         "id": item_id,
-        "chatId": "user",
+        "chatId": chat_id,
         "user_cd": item_cd,
         "user_nm": item_nm,
     }
     return user
 
-def chats_message(message_id, user_cd, user_nm, message_order, message):
+def chats_message(message_id, chat_id, user_cd, user_nm, message_order, message):
     """
     获取用户
     """
     message = {
         "id": message_id,
         "user_cd": user_cd,
-        "chatId": "message",
+        "chatId": chat_id,
         "user_nm": user_nm,
         "message_order": message_order,
         "message": message,
