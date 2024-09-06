@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { HttpParam, MessageContent, RecentContacts, Test0004Service } from './test0004.component.api';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-podcast',
@@ -9,8 +10,9 @@ import { HttpParam, MessageContent, RecentContacts, Test0004Service } from './te
   styleUrl: './test0004.component.css',
   standalone: true,
   imports: [
-    FormsModule,
-    MarkdownModule
+    FormsModule
+    , MarkdownModule
+    , CommonModule
   ],
 })
 
@@ -27,10 +29,13 @@ export class Test0004Component implements OnInit {
   messageList: Array<MessageContent> = []
   // 当前用户
   current_user_id: string = '';
+  current_user_nm: string = '';
   // 当前会话ID
   current_chat_id: string = '';
   // 上一次点击的index
   beforeIndex: number = -1;
+  // 加载
+  isLoading = false;
 
   constructor(private service: Test0004Service) { }
 
@@ -53,22 +58,13 @@ export class Test0004Component implements OnInit {
 
     // 获取当前用户
     this.service.getUser(req).then(res => {
-      console.log(res);
       this.userNm = res[0].userNm
     });
 
     // 获取最近联系人
     this.service.getContacts(req).then(res => {
-      console.log(res);
       this.contactsList = res
     });
-    
-    // const messageReq: HttpParam = { data: 'user01_1' }
-    // // 获取最近聊天内容
-    // this.service.getMessageList(messageReq).then(res => {
-    //   console.log(res)
-    //   this.messageList = res
-    // });
   }
 
   // 发送消息
@@ -84,17 +80,19 @@ export class Test0004Component implements OnInit {
       return
     }
 
+    this.isLoading = true;
+
     const req: HttpParam = { data: sendInput, user: this.current_user_id, chatId: this.current_chat_id }
     const entity: MessageContent = { chatId: '', message_q: sendInput, message_a: '' }
     this.messageList.push(entity)
     this.sendInput = ''
     this.service.sendSingleMessage(req).then(res => {
-      console.log(res)
       if (res.status === '666') {
         this.messageList[this.messageList.length - 1].chatId = res.entity.message_a
         this.messageList[this.messageList.length - 1].message_a = res.entity.message_a
       }
       this.scrollToBottom();
+      this.isLoading = false;
     })
   }
 
@@ -105,7 +103,7 @@ export class Test0004Component implements OnInit {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
       }
     } catch (err) {
-      console.log(err)
+      console.error('获取画面元素失败:', err);
     }
   }
 
@@ -130,11 +128,12 @@ export class Test0004Component implements OnInit {
 
   // 中断聊天
   interrupt() {
-    console.log(777);
+    console.log('中断');
   }
 
-  changeTab(index: number, chatId: string, userId: string) {
+  changeTab(index: number) {
 
+    // 上一次点击的元素背景色还原
     if (this.beforeIndex !== -1) {
       const beforeDiv = document.getElementById('contact' + this.beforeIndex);
       if (beforeDiv) {
@@ -142,21 +141,78 @@ export class Test0004Component implements OnInit {
       }
     }
 
+    // 当前点击的元素背景色设为蓝色
     const currentDiv = document.getElementById('contact' + index);
     if (currentDiv) {
       currentDiv.classList.replace('bg-gray-100', 'bg-blue-100')
     }
-    this.beforeIndex = index
-    console.log(currentDiv);
 
-    console.log(index)
-    this.current_chat_id = chatId;
-    this.current_user_id = userId;
-    const req: HttpParam = { data: '', user: userId, chatId: chatId }
+    // 保存点击的index
+    this.beforeIndex = index
+
+    // 点击的会话数据
+    const currentData = this.contactsList[index]
+    this.current_chat_id = currentData.id;
+    this.current_user_id = currentData.userId;
+    this.current_user_nm = currentData.userNm;
+
     // 获取最近聊天内容
+    const req: HttpParam = { data: '', user: currentData.userId, chatId: currentData.id }
     this.service.getMessageList(req).then(res => {
-      console.log(res)
       this.messageList = res
     });
+  }
+
+  // 回车键发送消息
+  sendOrLine(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      // 阻止默认的Enter换行行为
+      event.preventDefault();
+      // Ctrl + Enter => 换行
+      if (event.ctrlKey) {
+        this.sendInput = this.sendInput + '\n';
+      }
+      // Enter => 发送消息  
+      else {
+        if (!this.isLoading) {
+          this.send();
+        }
+      }
+    }
+  }
+
+  // 修改会话名称
+  editContactNm(index: number) {
+    const element = document.getElementById("contactNm" + index) as HTMLInputElement
+    if (element) {
+
+      // 获取文字内容
+      const textContent = element.innerText;
+
+      if (element.contentEditable === 'true') {
+        // 会话名称不可编辑
+
+        element.contentEditable = 'false'
+
+        if (this.contactsList[index].userNm === textContent) {
+          console.log('会话名称没有变化，无需修改')
+          return
+        }
+
+        // 调用后台API，更新会话名称
+        const req: HttpParam = { data: textContent, user: this.contactsList[index].userId, chatId: this.contactsList[index].id }
+        this.service.updateContactNm(req).then(res => {
+          if (res && res.status === '666') {
+            console.log('会话名称修改成功：' + res.entity.userNm)
+          }
+        });
+
+      } else {
+        // 会话名称可编辑
+
+        element.contentEditable = 'true'
+        element.focus()
+      }
+    }
   }
 }

@@ -30,7 +30,6 @@ export class Test0004Service {
 
     // 获取最近聊天内容
     async getMessageList(entity: HttpParam): Promise<Array<MessageContent>> {
-        console.log(entity)
         const res: Observable<Array<MessageContent>> = this.http.post<Array<MessageContent>>('/api/cosmos_api/get_message', entity)
 
         return new Promise((resolve) => {
@@ -41,6 +40,15 @@ export class Test0004Service {
     // 发送消息并取得回复
     async sendSingleMessage(entity: HttpParam): Promise<SingleMessage> {
         const res: Observable<SingleMessage> = this.http.post<SingleMessage>('/api/cosmos_api/send_message', entity)
+
+        return new Promise((resolve) => {
+            res.subscribe({ next: res => { resolve(res) } });
+        });
+    }
+    
+    // 更新会话名称
+    async updateContactNm(entity: HttpParam): Promise<UpdateContactNm> {
+        const res: Observable<UpdateContactNm> = this.http.post<UpdateContactNm>('/api/cosmos_api/update_contact_nm', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res) } });
@@ -58,7 +66,11 @@ export class Test0004Service {
 }
 
 export type User = {
+    id: string;
+    userId: string;
+    userCd: string;
     userNm: string;
+    delFlg: string;
 };
 
 export type RecentContacts = {
@@ -83,4 +95,9 @@ export type HttpParam = {
     data: string;
     user: string;
     chatId: string;
+};
+
+export type UpdateContactNm = {
+    status: string;
+    entity: User;
 };
