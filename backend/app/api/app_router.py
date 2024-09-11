@@ -8,7 +8,7 @@ from app.api.routes import interface
 from app.api.routes import dialogue_ctx
 from app.api.routes import cosmos_learn_v1
 from app.api.ai import wenxin_api
-from app.api.cosmos_api import cosmos_api
+from app.api.cosmos_api.test0004 import test0004_api
 
 app_router = APIRouter()
 
@@ -24,5 +24,5 @@ app_router.include_router(
     wenxin_api.router, prefix="/ai", tags=["ai"]
 )
 app_router.include_router(
-    cosmos_api.router, prefix="/cosmos_api", tags=["cosmos_api"]
+    test0004_api.router, prefix="/cosmos_api/test0004", tags=["cosmos_api"]
 )

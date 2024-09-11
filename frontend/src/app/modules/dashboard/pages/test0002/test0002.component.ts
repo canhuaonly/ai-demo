@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { Contacts, MessageContent, Test0002Service } from './test0002.component.api';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-podcast',
@@ -30,6 +31,12 @@ export class Test0002Component implements OnInit {
 
   // 初期化
   ngOnInit() {
+    const aaa = of('data');
+    aaa.subscribe(next => {
+      console.log('xxxxxxxxx');
+      console.log(next);
+    })
+    console.log(aaa)
     if (window) {
       this.getData();
     }
@@ -42,20 +49,19 @@ export class Test0002Component implements OnInit {
 
   // 初期数据取得
   async getData() {
-    // 获取当前用户
-    this.service.getUser().then(res => {
-      console.log(res);
+
+    this.service.getUser().subscribe(res => {
       this.userNm = res[0].user_nm
     });
 
     // 获取最近联系人
-    this.service.getContactsList().then(res => {
+    this.service.getContactsList().subscribe(res => {
       console.log(res)
       this.contactsList = res
     });
 
     // 获取最近聊天内容
-    this.service.getMessageList().then(res => {
+    this.service.getMessageList().subscribe(res => {
       console.log(res)
       this.messageList = res
     });
@@ -77,7 +83,7 @@ export class Test0002Component implements OnInit {
     const entity: MessageContent = { user_cd: 'user', user_nm: 'Wang', message_order: 3, message: sendInput, wenxin_id: 0 }
     this.messageList.push(entity)
     this.sendInput = ''
-    this.service.sendSingleMessage(entity).then(res => {
+    this.service.sendSingleMessage(entity).subscribe(res => {
       console.log(res)
       if (res.status === '666') {
         // this.messageList.push(...reponse.entity)
@@ -89,12 +95,8 @@ export class Test0002Component implements OnInit {
 
   // 滚动
   scrollToBottom(): void {
-    try {
-      if (this.myScrollContainer) {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-      }
-    } catch (err) {
-      console.log(err)
+    if (this.myScrollContainer) {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     }
   }
 
@@ -106,26 +108,11 @@ export class Test0002Component implements OnInit {
   // 创建新聊天
   async newChats() {
     const res = this.service.createNewChats(this.contactsList.length);
-    // this.contactsList.push(
-    //   {
-    //     'user_session_aka': res.user_session_aka,
-    //     'message': res.message
-    //   }
-    // );
     this.contactsList.splice(0, 0, 
       {
         'user_session_aka': res.user_session_aka,
         'message': res.message
       }
     );
-  }
-
-  // 中断聊天
-  interrupt() {
-    console.log(777);
-  }
-
-  changeTab(index: number) {
-    console.log('click:' + index);
   }
 }

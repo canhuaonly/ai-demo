@@ -11,8 +11,8 @@ export class Test0004Service {
     constructor(private http: HttpClient) {}
 
     // 获取当前用户
-    async getUser(entity: HttpParam): Promise<Array<User>> {
-        const res: Observable<Array<User>> = this.http.post<Array<User>>('/api/cosmos_api/get_user', entity)
+    async getUser(entity: HttpParam): Promise<Array<LoginUser>> {
+        const res: Observable<Array<LoginUser>> = this.http.post<Array<LoginUser>>('/api/cosmos_api/test0004/get_user', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res); } });
@@ -21,7 +21,7 @@ export class Test0004Service {
 
     // 获取最近联系人
     async getContacts(entity: HttpParam): Promise<Array<RecentContacts>> {
-        const res: Observable<Array<RecentContacts>> = this.http.post<Array<RecentContacts>>('/api/cosmos_api/get_recent_contacts', entity)
+        const res: Observable<Array<RecentContacts>> = this.http.post<Array<RecentContacts>>('/api/cosmos_api/test0004/get_recent_contacts', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res); } });
@@ -30,7 +30,7 @@ export class Test0004Service {
 
     // 获取最近聊天内容
     async getMessageList(entity: HttpParam): Promise<Array<MessageContent>> {
-        const res: Observable<Array<MessageContent>> = this.http.post<Array<MessageContent>>('/api/cosmos_api/get_message', entity)
+        const res: Observable<Array<MessageContent>> = this.http.post<Array<MessageContent>>('/api/cosmos_api/test0004/get_message', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res) } });
@@ -39,7 +39,7 @@ export class Test0004Service {
     
     // 发送消息并取得回复
     async sendSingleMessage(entity: HttpParam): Promise<SingleMessage> {
-        const res: Observable<SingleMessage> = this.http.post<SingleMessage>('/api/cosmos_api/send_message', entity)
+        const res: Observable<SingleMessage> = this.http.post<SingleMessage>('/api/cosmos_api/test0004/send_message', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res) } });
@@ -48,7 +48,7 @@ export class Test0004Service {
     
     // 更新会话名称
     async updateContactNm(entity: HttpParam): Promise<UpdateContactNm> {
-        const res: Observable<UpdateContactNm> = this.http.post<UpdateContactNm>('/api/cosmos_api/update_contact_nm', entity)
+        const res: Observable<UpdateContactNm> = this.http.post<UpdateContactNm>('/api/cosmos_api/test0004/update_contact_nm', entity)
 
         return new Promise((resolve) => {
             res.subscribe({ next: res => { resolve(res) } });
@@ -64,6 +64,15 @@ export class Test0004Service {
         return res;
     }
 }
+
+export type LoginUser = {
+    id: string;
+    userId: string;
+    userCd: string;
+    userNm: string;
+    partitionKey: string;
+    delFlg: string;
+};
 
 export type User = {
     id: string;

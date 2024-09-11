@@ -9,7 +9,8 @@
       <!-- 聊天联系人列表 -->
       <div class="flex flex-col space-y-2" id="contactsList">
         @for (item of contactsList; track $index) {
-          <div class="flex items-center p-2 bg-gray-100 rounded-lg cursor-pointer" (click)="changeTab($index)">
+          <!-- <div class="flex items-center p-2 bg-gray-100 rounded-lg cursor-pointer" (click)="changeTab($index)"> -->
+          <div class="flex items-center p-2 bg-gray-100 rounded-lg cursor-pointer">
             <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
             <div class="overflow-hidden">
               <h4 class="font-bold">{{ item.user_session_aka }}</h4>
@@ -57,7 +58,7 @@
       <div class="flex items-center mt-4 fixed bottom-20 w-3/5">
         <input type="text" placeholder="Type your message..." class="w-full border-gray-300 border rounded-lg py-2 px-4 mr-2" [(ngModel)]="sendInput" id="sendInput">
         <button class="bg-blue-600 text-white py-2 px-4 rounded-lg" (click)="send()" id="send">Send</button>
-        <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="interrupt()" id="interrupt">Interrupt</button>
+        <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" id="interrupt">Interrupt</button>
         <button class="bg-green-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="newChats()" id="newChats">New</button>
       </div>
     </div>

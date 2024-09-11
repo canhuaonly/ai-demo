@@ -59,12 +59,14 @@ export class Test0004Component implements OnInit {
     // 获取当前用户
     this.service.getUser(req).then(res => {
       this.userNm = res[0].userNm
-    });
 
-    // 获取最近联系人
-    this.service.getContacts(req).then(res => {
-      this.contactsList = res
+      // 获取最近联系人
+      const contactReq: HttpParam = { data: '', user: res[0].partitionKey, chatId: '' }
+      this.service.getContacts(contactReq).then(res => {
+        this.contactsList = res
+      });
     });
+    
   }
 
   // 发送消息
@@ -85,11 +87,13 @@ export class Test0004Component implements OnInit {
     const req: HttpParam = { data: sendInput, user: this.current_user_id, chatId: this.current_chat_id }
     const entity: MessageContent = { chatId: '', message_q: sendInput, message_a: '' }
     this.messageList.push(entity)
+    this.contactsList[this.beforeIndex].lastMsg = sendInput
     this.sendInput = ''
     this.service.sendSingleMessage(req).then(res => {
       if (res.status === '666') {
-        this.messageList[this.messageList.length - 1].chatId = res.entity.message_a
+        this.messageList[this.messageList.length - 1].chatId = res.entity.chatId
         this.messageList[this.messageList.length - 1].message_a = res.entity.message_a
+        this.contactsList[this.beforeIndex].lastMsg = res.entity.message_a
       }
       this.scrollToBottom();
       this.isLoading = false;
