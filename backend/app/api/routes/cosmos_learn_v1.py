@@ -1,10 +1,8 @@
-from typing import Any
-from fastapi import APIRouter, HTTPException, Body
-from app.utils.response.http_response import partner_success
-from app.utils.response.codes import CodeEnum
+"""Cosmod DB 官网示例"""
 import random
+from fastapi import APIRouter
 
-from app.cosmos import database
+from app.cosmos import db
 
 router = APIRouter()
 
@@ -65,8 +63,9 @@ router = APIRouter()
 # [C1] 创建/编辑用户
 @router.post("/createUsers", description="创建用户")
 async def create_users():
+    """[C1] 创建/编辑用户"""
     # 容器
-    container = database.get_container_client("users")
+    container = db.get_container_client("demo_users")
     try:
         # 插入数据
         for i in range(1, 10000 + 1):
@@ -75,33 +74,37 @@ async def create_users():
         # 返回数据
         return "数据插入成功10000条"
     except Exception as e:
-        return "数据插入失败" + str(e)
+        # return "数据插入失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q1] 检索用户
 @router.post("/searchUsers", description="检索用户")
 async def search_users():
-    container = database.get_container_client("users")
+    """[Q1] 检索用户"""
+    container = db.get_container_client("demo_users")
     try:
         # 查询数据
-        usersIt = container.query_items(
+        users_it = container.query_items(
             query="SELECT * FROM users u WHERE u.id = @user_id",
             parameters=[{"name": "@user_id", "value": "user1"}],
             enable_cross_partition_query=True,
         )
         # 取得items对象
-        users = [item for item in usersIt]
+        users = [item for item in users_it]
         # 返回数据
         return users
         # return items
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [C2] 创建/编辑帖子
 @router.post("/createPosts", description="创建帖子")
 async def create_posts():
-    container = database.get_container_client("posts")
+    """[C2] 创建/编辑帖子"""
+    container = db.get_container_client("demo_posts")
     try:
         # 插入数据
         for i in range(1, 100 + 1):
@@ -119,108 +122,144 @@ async def create_posts():
         # 返回数据
         return "数据插入成功"
     except Exception as e:
-        return "数据插入失败" + str(e)
+        # return "数据插入失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q2] 检索帖子
 @router.post("/searchPosts", description="检索帖子")
 async def search_posts():
-    container = database.get_container_client("posts")
-    containerUsers = database.get_container_client("users")
+    """[Q2] 检索帖子"""
+    container = db.get_container_client("demo_posts")
+    container_users = db.get_container_client("demo_users")
     try:
         # 查询数据
         # 查询帖子id为post1_1的帖子
-        postIt = container.query_items(
+        post_it = container.query_items(
             query="SELECT * FROM posts p WHERE p.id = @post_id",
             parameters=[{"name": "@post_id", "value": "post1_1"}],
             enable_cross_partition_query=True,
         )
         # 取得postIt的第一个元素为post对象
-        post = next(iter(postIt))
+        post = next(iter(post_it))
         print(post)
         # 查询帖子id为post1_1的帖子的评论数
-        commentsIt = container.query_items(
-            query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'comment'",
+        comments_it = container.query_items(
+            query="""
+                SELECT
+                    VALUE COUNT(1) 
+                FROM
+                    posts p 
+                WHERE
+                    p.postId = @post_id 
+                    AND p.type = 'comment'
+            """,
             parameters=[{"name": "@post_id", "value": "post1_1"}],
             enable_cross_partition_query=True,
         )
         # 取得comments对象
-        comments = [item for item in commentsIt]
+        comments = [item for item in comments_it]
         print(comments)
         post["commentCount"] = comments[0]
         # 查询帖子id为post1_1的帖子的点赞数
-        likesIt = container.query_items(
-            query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'like'",
+        likes_it = container.query_items(
+            query="""
+                SELECT
+                    VALUE COUNT(1) 
+                FROM
+                    posts p 
+                WHERE
+                    p.postId = @post_id 
+                    AND p.type = 'like'
+            """,
             parameters=[{"name": "@post_id", "value": "post1_1"}],
             enable_cross_partition_query=True,
         )
         # 取得likes对象
-        likes = [item for item in likesIt]
+        likes = [item for item in likes_it]
         print(likes)
         post["likeCount"] = likes[0]
         # 查询帖子发起者的用户名称
-        userIt = containerUsers.query_items(
+        user_it = container_users.query_items(
             query="SELECT u.username FROM users u WHERE u.id = @user_id",
             parameters=[{"name": "@user_id", "value": post["userId"]}],
             enable_cross_partition_query=True,
         )
         # 取得user对象
-        user = [item for item in userIt]
+        user = [item for item in user_it]
         print(user)
         post["username"] = user[0]["username"]
         # 将帖子、评论、点赞、用户名称返回
         # return partner_success(posts)
         return post
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q3] 以短格式列出用户的帖子
 @router.post("/searchUserPosts", description="列出用户的帖子")
 async def search_user_posts():
+    """[Q3] 以短格式列出用户的帖子"""
     # 容器
-    container = database.get_container_client("posts")
+    container = db.get_container_client("demo_posts")
     # 用户容器
-    containerUsers = database.get_container_client("users")
+    container_users = db.get_container_client("demo_users")
     # 数据查询的分页标记
     # continuation_token = None
     try:
         # 查询数据
         posts = []
         # 查询用户user1的帖子,取得对应的点赞数、评论数和用户名
-        postsIt = container.query_items(
+        posts_it = container.query_items(
             query="SELECT * FROM posts p WHERE p.userId = @user_id",
             parameters=[{"name": "@user_id", "value": "user1"}],
             enable_cross_partition_query=True,
             # max_item_count=3,
             # continuation_token=continuation_token,
         )
-        for post in postsIt:
+        for post in posts_it:
             # 查询帖子的评论数
-            commentsIt = container.query_items(
-                query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'comment'",
+            comments_it = container.query_items(
+                query="""
+                    SELECT
+                        VALUE COUNT(1) 
+                    FROM
+                        posts p 
+                    WHERE
+                        p.postId = @post_id 
+                        AND p.type = 'comment'
+                """,
                 parameters=[{"name": "@post_id", "value": post["id"]}],
                 enable_cross_partition_query=True,
             )
-            comments = [item for item in commentsIt]
+            comments = [item for item in comments_it]
             print(comments)
             post["commentCount"] = comments[0]
             # 查询帖子的点赞数
-            likesIt = container.query_items(
-                query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'like'",
+            likes_it = container.query_items(
+                query="""
+                    SELECT
+                        VALUE COUNT(1) 
+                    FROM
+                        posts p 
+                    WHERE
+                        p.postId = @post_id 
+                        AND p.type = 'like'
+                """,
                 parameters=[{"name": "@post_id", "value": post["id"]}],
                 enable_cross_partition_query=True,
             )
-            likes = [item for item in likesIt]
+            likes = [item for item in likes_it]
             print(likes)
             post["likeCount"] = likes[0]
             # 查询帖子发起者的用户名称
-            userIt = containerUsers.query_items(
+            user_it = container_users.query_items(
                 query="SELECT * FROM users u WHERE u.id = @user_id",
                 parameters=[{"name": "@user_id", "value": post["userId"]}],
                 enable_cross_partition_query=True,
             )
-            user = [item for item in userIt]
+            user = [item for item in user_it]
             print(user)
             post["username"] = user[0]["username"]
             print(post)
@@ -230,13 +269,15 @@ async def search_user_posts():
         # 返回数据
         return posts
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [C3] 创建评论
 @router.post("/createComments", description="创建评论")
 async def create_comments():
-    container = database.get_container_client("posts")
+    """[C3] 创建评论"""
+    container = db.get_container_client("demo_posts")
     try:
         # 插入数据
         # 查询所有帖子
@@ -258,43 +299,47 @@ async def create_comments():
         # 返回数据
         return "数据插入成功"
     except Exception as e:
-        return "数据插入失败" + str(e)
+        # return "数据插入失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q4] 列出帖子的评论
 @router.post("/searchPostComments", description="列出帖子的评论")
 async def search_post_comments():
-    container = database.get_container_client("posts")
+    """[Q4] 列出帖子的评论"""
+    container = db.get_container_client("demo_posts")
     try:
         # 查询数据
         comments = []
         # 查询帖子post1_1的评论
-        commentsIt = container.query_items(
+        comments_it = container.query_items(
             query="SELECT * FROM posts p WHERE p.postId = @post_id AND p.type = 'comment'",
             parameters=[{"name": "@post_id", "value": "post1_1"}],
             enable_cross_partition_query=True,
         )
         # 查询评论的用户名称
-        for comment in commentsIt:
-            userIt = container.query_items(
+        for comment in comments_it:
+            user_it = container.query_items(
                 query="SELECT u.username FROM users u WHERE u.id = @user_id",
                 parameters=[{"name": "@user_id", "value": comment["userId"]}],
                 enable_cross_partition_query=True,
             )
-            user = [item for item in userIt]
+            user = [item for item in user_it]
             comment["username"] = user[0]["username"]
             # comment对象放入集合
             comments.append(comment)
         # 返回数据
         return comments
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [C4] 为帖子点赞
 @router.post("/createLikes", description="为帖子点赞")
 async def create_likes():
-    container = database.get_container_client("posts")
+    """[C4] 为帖子点赞"""
+    container = db.get_container_client("demo_posts")
     try:
         # 插入数据
         # 查询所有帖子
@@ -317,111 +362,145 @@ async def create_likes():
         # 返回数据
         return "数据插入成功"
     except Exception as e:
-        return "数据插入失败" + str(e)
+        # return "数据插入失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q5] 列出帖子的点赞数
 @router.post("/searchPostLikes", description="列出帖子的点赞数")
 async def search_post_likes():
-    container = database.get_container_client("posts")
-    containerUsers = database.get_container_client("users")
+    """[Q5] 列出帖子的点赞数"""
+    container = db.get_container_client("demo_posts")
+    container_users = db.get_container_client("demo_users")
     try:
         # 查询
         likes = []
         # 查询帖子post1_1的点赞用户
-        likesIt = container.query_items(
+        likes_it = container.query_items(
             query="SELECT * FROM posts p WHERE p.postId = @post_id AND p.type = 'like'",
             parameters=[{"name": "@post_id", "value": "post1_1"}],
             enable_cross_partition_query=True,
         )
         # 查询点赞用户名称
-        for like in likesIt:
-            userIt = containerUsers.query_items(
+        for like in likes_it:
+            user_it = container_users.query_items(
                 query="SELECT u.username FROM users u WHERE u.id = @user_id",
-                # parameters=[{"name": "@user_id", "value": like["userId"]}], # user不存在,插入数据存在问题，暂时注释
+                # parameters=[{"name": "@user_id", "value": like["userId"]}],
+                # # user不存在,插入数据存在问题，暂时注释
                 parameters=[{"name": "@user_id", "value": "user1"}],
                 enable_cross_partition_query=True,
             )
-            user = [item for item in userIt]
+            user = [item for item in user_it]
             like["username"] = user[0]["username"]
             # like对象放入集合
             likes.append(like)
         # 返回数据
         return likes
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # [Q6] 以短格式列出最近创建的 x 个帖子（源）
 @router.post("/searchRecentPosts", description="列出最近创建的 x 个帖子")
 async def search_recent_posts():
-    container = database.get_container_client("posts")
-    containerUsers = database.get_container_client("users")
+    """[Q6] 以短格式列出最近创建的 x 个帖子（源）"""
+    container = db.get_container_client("demo_posts")
+    container_users = db.get_container_client("demo_users")
     try:
         # 查询数据
         posts = []
         # 查询最近创建的100个帖子
-        postsIt = container.query_items(
-            query="SELECT TOP 100 * FROM posts p WHERE p.type = 'post' ORDER BY p.creationDate DESC",
+        posts_it = container.query_items(
+            query="""
+                SELECT 
+                    TOP 100 * 
+                FROM 
+                    posts p 
+                WHERE 
+                    p.type = 'post' 
+                ORDER BY 
+                    p.creationDate DESC
+            """,
             enable_cross_partition_query=True,
         )
         # 查询帖子的评论数、点赞数和用户名称
-        for post in postsIt:
+        for post in posts_it:
             print(post["id"])
             # 查询帖子的评论数
-            commentsIt = container.query_items(
-                query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'comment'",
+            comments_it = container.query_items(
+                query="""
+                    SELECT 
+                        VALUE COUNT(1) 
+                    FROM 
+                        posts p 
+                    WHERE 
+                        p.postId = @post_id 
+                        AND p.type = 'comment'
+                """,
                 parameters=[{"name": "@post_id", "value": post["id"]}],
                 enable_cross_partition_query=True,
             )
-            comments = [item for item in commentsIt]
+            comments = [item for item in comments_it]
             post["commentCount"] = comments[0]
             # 查询帖子的点赞数
-            likesIt = container.query_items(
-                query="SELECT VALUE COUNT(1) FROM posts p WHERE p.postId = @post_id AND p.type = 'like'",
+            likes_it = container.query_items(
+                query="""
+                    SELECT 
+                        VALUE COUNT(1) 
+                    FROM 
+                        posts p 
+                    WHERE 
+                        p.postId = @post_id 
+                        AND p.type = 'like'
+                """,
                 parameters=[{"name": "@post_id", "value": post["id"]}],
                 enable_cross_partition_query=True,
             )
-            likes = [item for item in likesIt]
+            likes = [item for item in likes_it]
             post["likeCount"] = likes[0]
             # 查询帖子发起者的用户名称
-            userIt = containerUsers.query_items(
+            user_it = container_users.query_items(
                 query="SELECT u.username FROM users u WHERE u.id = @user_id",
                 parameters=[{"name": "@user_id", "value": post["userId"]}],
                 enable_cross_partition_query=True,
             )
-            user = [item for item in userIt]
+            user = [item for item in user_it]
             post["username"] = user[0]["username"]
             # post对象放入集合
             posts.append(post)
         # 返回数据
         return posts
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # 查询user1用户的帖子
 @router.post("/searchUser1Posts", description="查询user1用户的帖子")
 async def search_user1_posts():
-    container = database.get_container_client("posts")
+    """[Q6] 以短格式列出最近创建的 x 个帖子（源）"""
+    container = db.get_container_client("demo_posts")
     try:
         # 查询数据
         # 查询用户user1的帖子
-        postsIt = container.query_items(
+        posts_it = container.query_items(
             query="SELECT * FROM posts p WHERE p.userId = @user_id",
             parameters=[{"name": "@user_id", "value": "user1"}],
             enable_cross_partition_query=True,
         )
         # 取得posts对象
-        posts = [item for item in postsIt]
+        posts = [item for item in posts_it]
         # 返回数据
         return posts
     except Exception as e:
-        return "数据查询失败" + str(e)
+        # return "数据查询失败" + str(e)
+        raise ValueError("数据查询失败: " + str(e)) from e
 
 
 # 获取用户
 def get_user(item_id, item_name):
+    """获取用户"""
     user = {
         "id": item_id,
         "username": item_name,
@@ -431,6 +510,7 @@ def get_user(item_id, item_name):
 
 # 获取帖子
 def get_post(item_id, user_id, title, content):
+    """获取帖子"""
     post = {
         "id": item_id,
         "type": "post",
@@ -445,6 +525,7 @@ def get_post(item_id, user_id, title, content):
 
 # 获取评论
 def get_comment(item_id, post_id, user_id, content):
+    """获取评论"""
     comment = {
         "id": item_id,
         "type": "comment",

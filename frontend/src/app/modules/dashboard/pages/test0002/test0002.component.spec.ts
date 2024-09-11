@@ -3,6 +3,7 @@ import { Test0002Component } from './test0002.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MessageContent, SingleMessage, Test0002Service } from "./test0002.component.api";
 import  '../../../../../jestGlobalMocks';
+import { of } from 'rxjs';
 // const test0002Service = require('./test0002.component.api')
 
 describe('画面 Test0002 初期化', () => {
@@ -43,27 +44,14 @@ describe('画面 Test0002 初期化', () => {
     expect(component.messageList.length).toBe(0);
     
     // 模拟调用后台，设置返回值
-    const getUserSpy = jest.spyOn(service, 'getUser').mockResolvedValue([{user_nm: 'aaa'}]);
-    const getContactsListSpy = jest.spyOn(service, 'getContactsList').mockResolvedValue([{user_session_aka: 'aaa', message: 'bbb'}]);
-    const getMessageListSpy = jest.spyOn(service, 'getMessageList').mockResolvedValue(
+    const getUserSpy = jest.spyOn(service, 'getUser').mockImplementation(() => {return of([{user_nm: 'User01'}])});
+    const getContactsListSpy = jest.spyOn(service, 'getContactsList').mockImplementation(() => {return of([{ user_session_aka: 'aaa', message: 'bbb' }])});
+    const getMessageListSpy = jest.spyOn(service, 'getMessageList').mockImplementation(() => {return of(
       [
-        {
-          user_cd: 'User1',
-          user_nm: 'Wang',
-          message_order: 0,
-          message: 'aaa',
-          wenxin_id: 0,
-        }, 
-        {
-          user_cd: 'User2',
-          user_nm: 'Wang',
-          message_order: 0,
-          message: 'bbb',
-          wenxin_id: 0,
-        },
-
+        { user_cd: 'User1', user_nm: 'Wang', message_order: 0, message: 'aaa', wenxin_id: 0 }, 
+        { user_cd: 'User2', user_nm: 'Wang', message_order: 0, message: 'bbb', wenxin_id: 0 }
       ]
-    );
+    )});
 
     // 验证函数没有被调用
     expect(getUserSpy).not.toHaveBeenCalled();
@@ -152,24 +140,12 @@ describe('画面 Test0002 Send', () => {
     }
     
     // 模拟调用后台，设置返回值
-    jest.spyOn(service, 'getMessageList').mockResolvedValue(
+    jest.spyOn(service, 'getMessageList').mockImplementation(() => {return of(
       [
-        {
-          user_cd: 'User1',
-          user_nm: 'Wang',
-          message_order: 0,
-          message: 'aaa',
-          wenxin_id: 0,
-        }, 
-        {
-          user_cd: 'User2',
-          user_nm: 'Wang',
-          message_order: 0,
-          message: 'bbb',
-          wenxin_id: 0,
-        },
+        { user_cd: 'User1', user_nm: 'Wang', message_order: 0, message: 'aaa', wenxin_id: 0 }, 
+        { user_cd: 'User2', user_nm: 'Wang', message_order: 0, message: 'bbb', wenxin_id: 0 }
       ]
-    );
+    )});
     
     const scrollToBottomSpy = jest.spyOn(component, 'scrollToBottom');
 
@@ -182,18 +158,10 @@ describe('画面 Test0002 Send', () => {
       const messageListLength = component.messageList.length;
 
       // 模拟调用后台，设置返回值
-      const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockResolvedValue(tempRes);
+      const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockImplementation(() => { return of(tempRes) });
 
       // 验证函数没有被调用
       expect(sendSingleMessageSpy).not.toHaveBeenCalled();
-
-      // 直接调用
-      await service.sendSingleMessage(tempReq).then(async res => {
-        console.log(res);
-
-        // 验证函数被调用的次数
-        expect(sendSingleMessageSpy).toHaveBeenCalledTimes(1);
-      });
 
       // 模拟按下Send按钮
       await component.send().then(() => {
@@ -205,7 +173,7 @@ describe('画面 Test0002 Send', () => {
         expect(scrollToBottomSpy).toHaveBeenCalled();
   
         // 验证函数被调用的次数
-        expect(sendSingleMessageSpy).toHaveBeenCalledTimes(2);
+        expect(sendSingleMessageSpy).toHaveBeenCalledTimes(1);
 
         // 验证函数被特定参数调用
         expect(sendSingleMessageSpy).toHaveBeenCalledWith(tempReq);
@@ -213,6 +181,16 @@ describe('画面 Test0002 Send', () => {
         // 还原
         scrollToBottomSpy.mockRestore();
         sendSingleMessageSpy.mockRestore();
+      });
+
+      // 直接调用
+      return service.sendSingleMessage(tempReq).subscribe(res => {
+        console.log(res);
+
+        expect(res).toEqual(tempRes)
+
+        // 验证函数被调用的次数
+        expect(sendSingleMessageSpy).toHaveBeenCalledTimes(2);
       });
     });
   });
@@ -264,6 +242,8 @@ describe('Test0002Component Dom', () => {
 
     // 验证调用次数
     expect(component.contactsList.length).toBe(1);
+
+    expect(component.contactsList[0].message).toContain('测试')
 
     // 更新视图
     fixture.detectChanges();
@@ -345,7 +325,6 @@ describe('DOM操作测试', () => {
   });
 });
 
-
 /* ============================== Test Component Dom ============================== */
 describe('测试画面: 0002', () => {
   let component: Test0002Component;
@@ -377,12 +356,15 @@ describe('测试画面: 0002', () => {
   it('测试 初期化 正常场合1', async () => {
 
     // 模拟调用后台，设置返回值
-    const getUserSpy = jest.spyOn(service, 'getUser').mockResolvedValue([{user_nm: 'User01'}]);
-    const getContactsListSpy = jest.spyOn(service, 'getContactsList').mockResolvedValue([{user_session_aka: 'Jest Dom测试', message: '这是一条Jest的Dom测试内容'}]);
-    const getMessageListSpy = jest.spyOn(service, 'getMessageList').mockResolvedValue([
-      { user_cd: "user", user_nm: "Wang", message: "你会说英文吗", wenxin_id: 34, message_order: 21 },
-      { user_cd: "assistant", user_nm: "文心一言", message: "是的，我会说英文。除了中文，我也可以为您提供英文交流的服务。", wenxin_id: 35, message_order: 22 }
-    ]);
+    // const getUserSpy = jest.spyOn(service, 'getUser').mockResolvedValue([{user_nm: 'User01'}]);
+    const getUserSpy = jest.spyOn(service, 'getUser').mockImplementation(() => {return of([{user_nm: 'User01'}])});
+    const getContactsListSpy = jest.spyOn(service, 'getContactsList').mockImplementation(() => {return of([{ user_session_aka: 'Jest Dom测试', message: '这是一条Jest的Dom测试内容' }])});
+    const getMessageListSpy = jest.spyOn(service, 'getMessageList').mockImplementation(() => {return of(
+      [
+        { user_cd: "user", user_nm: "Wang", message: "你会说英文吗", wenxin_id: 34, message_order: 21 },
+        { user_cd: "assistant", user_nm: "文心一言", message: "是的，我会说英文。除了中文，我也可以为您提供英文交流的服务。", wenxin_id: 35, message_order: 22 }
+      ]
+    )});
 
     // 函数没有被调用
     expect(getUserSpy).not.toHaveBeenCalled();
@@ -400,6 +382,8 @@ describe('测试画面: 0002', () => {
       expect(getUserSpy).toHaveBeenCalledTimes(1);
       expect(getContactsListSpy).toHaveBeenCalledTimes(1);
       expect(getMessageListSpy).toHaveBeenCalledTimes(1);
+
+      // expect(component.userNm1).toBe('aaa')
 
       // 更新视图
       fixture.detectChanges();
@@ -527,7 +511,7 @@ describe('测试画面: 0002', () => {
     const tempRes: SingleMessage = { status: '666', entity: messageList }
     
     // 模拟调用后台，设置返回值
-    const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockResolvedValue(tempRes);
+    const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockImplementation(() => { return of(tempRes) });
 
     // 函数未被调用
     expect(sendSingleMessageSpy).not.toHaveBeenCalled();
@@ -586,7 +570,7 @@ describe('测试画面: 0002', () => {
     const tempRes: SingleMessage = { status: '666', entity: messageList }
     
     // 模拟调用后台，设置返回值
-    const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockResolvedValue(tempRes);
+    const sendSingleMessageSpy = jest.spyOn(service, 'sendSingleMessage').mockImplementation(() => { return of(tempRes) });
 
     // 函数未被调用
     expect(sendSingleMessageSpy).not.toHaveBeenCalled();
@@ -618,4 +602,88 @@ describe('测试画面: 0002', () => {
     expect(messageListDiv.childElementCount).toBe(0);
   });
 
+});
+
+
+describe('测试画面: 0002 Service', () => {
+  let component: Test0002Component;
+  let fixture: ComponentFixture<Test0002Component>;
+  let service: Test0002Service;
+  // let httpTestingController: HttpTestingController;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Test0002Component, HttpClientTestingModule],
+      providers: [Test0002Service],
+    })
+    .compileComponents();
+    
+    // 创建组件实例
+    fixture = TestBed.createComponent(Test0002Component);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    // httpTestingController = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(Test0002Service);
+  });
+
+  it('测试 创建组件实例 是否成功', () => {
+    expect(service).toBeTruthy();
+    expect(component).toBeTruthy();
+  });
+
+  // const myObservable = new Observable((observer) => {
+  //   // 当subscribe时，调用observer的next方法发送值
+  //   observer.next('Hello, Jest!');
+  // });
+
+  it('测试 Service', async () => {
+
+    const res = service.createNewChats(3)
+    expect(res.message).toContain('会话')
+
+  //   const mockData: User[] = [{user_nm: 'aaa'}];
+  //   // 模拟调用后台，设置返回值
+  //   const getUserSpy = jest.spyOn(service, 'getUser1').mockImplementation(() => {return of([{user_nm: 'aaa'}])});
+  //   // const getUserSpy = jest.spyOn(service.getUser1(), 'subscribe').mockImplementation(() => {return of(mockData).subscribe()});
+
+  //   service.getUser1().subscribe(response => {
+  //     expect(response.length).toBe(mockData.length);
+  //     expect(response).toEqual(mockData);
+
+  //     // 验证函数被调用
+  //     expect(getUserSpy).toHaveBeenCalled();
+  
+  //     // 验证函数被调用的次数
+  //     expect(getUserSpy).toHaveBeenCalledTimes(1);
+  //   });
+
+  //   service.getUser1().subscribe({
+  //     next: res => {
+  //       expect(res.length).toBe(mockData.length);
+  //       expect(res).toEqual(mockData);
+  
+  //       // 验证函数被调用
+  //       expect(getUserSpy).toHaveBeenCalled();
+    
+  //       // 验证函数被调用的次数
+  //       expect(getUserSpy).toHaveBeenCalledTimes(1);
+  //     }
+  //   });
+  // });
+
+
+
+  // it('测试 Service', async () => {
+
+  //   // 创建一个mockNext函数来检查next被调用时的行为
+  //   const mockNext = jest.fn();
+    
+  //   // 使用jest.spyOn来模拟subscribe
+  //   const subscribeSpy = jest.spyOn(myObservable, 'subscribe').mockImplementation(() => ({
+  //     unsubscribe() {}, // 模拟unsubscribe方法
+  //   }));
+  });
+
+  
 });

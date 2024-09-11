@@ -1,15 +1,14 @@
-import requests
+""" Test0003画面 API"""
 import json
+from typing import Any, List
+import requests
 
-from fastapi import Depends, APIRouter, HTTPException, Body
-from app.utils.response.http_response import partner_success
+from fastapi import APIRouter, HTTPException
 from app.schemas.api.dialogue_ctx import (
     DialogueCtxQuery,
     DialogueCtxIn,
-    DialogueCtxSessionId,
 )
 from app.services.api.dialogue_ctx import DialogueCtxService
-from typing import Any, List
 from app.deps.db import DatabaseAsyncSession
 
 # from sqlalchemy.orm import Session
@@ -29,8 +28,8 @@ URL = (
 
 @router.post("/get_qa_list", description="获取历史会话")
 async def get_qa_list(dialogue_ctx: DialogueCtxQuery, session: DatabaseAsyncSession):
+    """ 获取历史会话 """
     try:
-        # 获取历史会话
         qa_list = await DialogueCtxService.get_context(session, dialogue_ctx.session_id)
         if 1 == 2:
             print(qa_list)
@@ -43,6 +42,7 @@ async def get_qa_list(dialogue_ctx: DialogueCtxQuery, session: DatabaseAsyncSess
 
 @router.post("/wenxin_api", description="文心一言问答接口")
 async def wenxin_api(dialogue_ctx: DialogueCtxQuery, session: DatabaseAsyncSession):
+    """ 文心一言问答接口 """
     try:
         # 获取AI认证信息
         access_token = get_access_token()
@@ -88,18 +88,18 @@ def get_access_token():
         "client_id": API_KEY,
         "client_secret": SECRET_KEY,
     }
-    return str(requests.post(url, params=params).json().get("access_token"))
+    return str(requests.post(url, params=params, timeout=5000).json().get("access_token"))
 
 
 def call_wenxin_yiyan(access_token: str, qa_list: List[Any]) -> Any:
-    # 文心一言API的URL（你需要替换成实际的URL和参数）
+    """ 文心一言API的URL（你需要替换成实际的URL和参数） """ 
     url = URL + "?access_token=" + get_access_token()
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}",
     }
     payload = json.dumps({"messages": qa_list})
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload, timeout=5000)
     return response.json()["result"]
 
 
