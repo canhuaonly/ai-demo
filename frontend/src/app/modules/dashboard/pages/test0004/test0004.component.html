@@ -8,6 +8,10 @@
       </div>
       <!-- 聊天联系人列表 -->
       <div class="flex flex-col space-y-2" id="contactsList">
+        <div class="bg-gray-100 text-center cursor-pointer">
+          <button class="bg-green-500 text-white py-2 px-24 ml-2 rounded-lg" (click)="newChats()" id="newChats">㈩</button>
+          <!-- <span>㈩</span> -->
+        </div>
         @for (item of contactsList; track $index) {
           <div class="bg-gray-100 flex items-center p-2 rounded-lg cursor-pointer border-2" id="contact{{ $index }}" (click)="changeTab($index)">
             <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
@@ -22,7 +26,7 @@
         }
       </div>
     </div>
-    <div class="flex-1 p-4">
+    <div class="flex-1 p-4" id="contentContainer">
       @if (current_chat_id) {
         <!-- 聊天标题栏 -->
         <div class="flex items-center mb-4">
@@ -60,8 +64,7 @@
             <span *ngIf="!isLoading">Send</span>
             <span *ngIf="isLoading">...</span>
           </button>
-          <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="interrupt()" id="interrupt">Interrupt</button>
-          <button class="bg-green-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="newChats()" id="newChats">New</button>
+          <!-- <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="interrupt()" id="interrupt">Interrupt</button> -->
         </div>
       }
       @else {

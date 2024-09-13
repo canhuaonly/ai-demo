@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# @author: xiaobai
+"""FastAPI Startup file"""
 import uvicorn
 
 from app.factory import create_app

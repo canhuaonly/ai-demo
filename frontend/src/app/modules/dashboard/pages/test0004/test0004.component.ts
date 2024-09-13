@@ -32,6 +32,8 @@ export class Test0004Component implements OnInit {
   current_user_nm: string = '';
   // 当前会话ID
   current_chat_id: string = '';
+  // 当前登录用户的Key
+  current_partition_key: string = '';
   // 上一次点击的index
   beforeIndex: number = -1;
   // 加载
@@ -57,16 +59,17 @@ export class Test0004Component implements OnInit {
     const req: HttpParam = { data: 'wangtao', user: '', chatId: '' }
 
     // 获取当前用户
-    this.service.getUser(req).then(res => {
+    this.service.getUser(req).subscribe(res => {
       this.userNm = res[0].userNm
+
+      this.current_partition_key = res[0].partitionKey;
 
       // 获取最近联系人
       const contactReq: HttpParam = { data: '', user: res[0].partitionKey, chatId: '' }
-      this.service.getContacts(contactReq).then(res => {
+      this.service.getContacts(contactReq).subscribe(res => {
         this.contactsList = res
       });
     });
-    
   }
 
   // 发送消息
@@ -89,7 +92,7 @@ export class Test0004Component implements OnInit {
     this.messageList.push(entity)
     this.contactsList[this.beforeIndex].lastMsg = sendInput
     this.sendInput = ''
-    this.service.sendSingleMessage(req).then(res => {
+    this.service.sendSingleMessage(req).subscribe(res => {
       if (res.status === '666') {
         this.messageList[this.messageList.length - 1].chatId = res.entity.chatId
         this.messageList[this.messageList.length - 1].message_a = res.entity.message_a
@@ -102,12 +105,8 @@ export class Test0004Component implements OnInit {
 
   // 滚动
   scrollToBottom(): void {
-    try {
-      if (this.myScrollContainer) {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-      }
-    } catch (err) {
-      console.error('获取画面元素失败:', err);
+    if (this.myScrollContainer) {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     }
   }
 
@@ -118,24 +117,38 @@ export class Test0004Component implements OnInit {
 
   // 创建新聊天
   async newChats() {
-    // const res = this.service.createNewChats(this.contactsList.length);
-    // this.contactsList.splice(0, 0, 
-    //   {
-    //     'user_cd': '',
-    //     'user_nm': res.user_session_aka,
-    //     'message_order': 0,
-    //     'wenxin_id': 0,
-    //     'message': res.message
-    //   }
-    // );
+    this.contactsList.splice(0, 0, 
+      {
+        'id': 'tempId',
+        'userId': this.current_partition_key,
+        'userNm': '',
+        'lastMsg': '点击开始聊天'
+      }
+    );
+
+    const element = document.getElementById("contactNm0") as HTMLInputElement
+    if (element) {
+      element.textContent = 'New Chat'
+      element.contentEditable = 'true'
+      element.focus()
+    }
+    console.log('New Chats');
   }
 
-  // 中断聊天
-  interrupt() {
-    console.log('中断');
-  }
+  // // 中断聊天
+  // interrupt() {
+  //   console.log('中断');
+  // }
 
+  // 切换会话
   changeTab(index: number) {
+
+    console.log('切换会话' + index);
+
+    const element = document.getElementById("contactNm" + index) as HTMLInputElement
+    if (element) {
+      if (element.contentEditable === 'true') return
+    }
 
     // 上一次点击的元素背景色还原
     if (this.beforeIndex !== -1) {
@@ -162,7 +175,7 @@ export class Test0004Component implements OnInit {
 
     // 获取最近聊天内容
     const req: HttpParam = { data: '', user: currentData.userId, chatId: currentData.id }
-    this.service.getMessageList(req).then(res => {
+    this.service.getMessageList(req).subscribe(res => {
       this.messageList = res
     });
   }
@@ -205,9 +218,18 @@ export class Test0004Component implements OnInit {
 
         // 调用后台API，更新会话名称
         const req: HttpParam = { data: textContent, user: this.contactsList[index].userId, chatId: this.contactsList[index].id }
-        this.service.updateContactNm(req).then(res => {
-          if (res && res.status === '666') {
+        this.service.updateContactNm(req).subscribe(res => {
+          if (res && (res.status === '666' || res.status === '777')) {
             console.log('会话名称修改成功：' + res.entity.userNm)
+            this.contactsList[index].id = res.entity.id
+            this.contactsList[index].userId = res.entity.userId
+            this.contactsList[index].userNm = res.entity.userNm
+            this.changeTab(index)
+            this.current_chat_id = res.entity.id
+            this.current_user_id = res.entity.userId
+            this.current_user_nm = res.entity.userNm
+          } else {
+            console.log('失败了：' + res)
           }
         });
 

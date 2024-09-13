@@ -1,6 +1,7 @@
 """ Test0004 backend """
 
 import json
+import uuid
 from fastapi import APIRouter, HTTPException
 
 from app.api.cosmos_api.test0004 import test0004_entity
@@ -42,7 +43,7 @@ def cosmos_get_user(param: dict):
     """ 获取当前用户 """
 
     if param is None or "data" not in param or param['data'] == "":
-        raise HTTPException(status_code=400, detail="参数错误")
+        raise HTTPException(status_code=400, detail="参数错误1")
 
     # 检索执行
     current_user = test0004_service.select_login_user_list(param['data'])
@@ -55,7 +56,7 @@ def cosmos_get_user1(param: dict):
     """ TEMP获取当前用户 TODO:要删除 """
 
     if param is None or "data" not in param or param['data'] == "":
-        raise HTTPException(status_code=400, detail="参数错误123")
+        raise HTTPException(status_code=400, detail="参数错误2")
 
     # 检索执行
     current_user = test0004_service.select_login_user_list1(param['data'])
@@ -68,7 +69,7 @@ def cosmos_get_recent_contacts(param: dict):
     """ 获取最近联系人 """
 
     if param is None or "user" not in param or param['user'] == "":
-        raise HTTPException(status_code=400, detail="参数错误")
+        raise HTTPException(status_code=400, detail="参数错误3")
 
     # 获取最近联系人
     users = test0004_service.select_recent_contacts_users_list(param['user'])
@@ -77,7 +78,12 @@ def cosmos_get_recent_contacts(param: dict):
         # 获取用户最近聊天列表
         message_list = test0004_service.select_recent_contacts_messages_list(user['id'])
         if len(message_list) > 0:
-            user["lastMsg"] = message_list[0]['message_a']
+            if message_list[0]['message_a'] != "":
+                user["lastMsg"] = message_list[0]['message_a']
+            else:
+                user["lastMsg"] = "点击开始聊天"
+        else:
+            user["lastMsg"] = "点击开始聊天"
 
     # 返回数据
     return users
@@ -88,7 +94,7 @@ def cosmos_get_message(param: dict):
     """ 获取最近聊天内容 """
 
     if param is None or "chatId" not in param or param['chatId'] == "":
-        raise HTTPException(status_code=400, detail="参数错误")
+        raise HTTPException(status_code=400, detail="参数错误4")
 
     # 检索执行
     message_list = test0004_service.select_current_user_messages_list(param['chatId'])
@@ -99,38 +105,50 @@ def cosmos_get_message(param: dict):
 @router.post("/send_message")
 def cosmos_send_message(param: dict):
     """ 发送消息，获取回答 """
-    try:
+
+    if param is None or "chatId" not in param or param['chatId'] == "":
+        raise HTTPException(status_code=400, detail="参数chatId错误")
+    if param is None or "data" not in param or param['data'] == "":
+        raise HTTPException(status_code=400, detail="参数data错误")
+
+    # try:
         ##### 检索所有聊天内容 #####
         # 查询数据
-        message_it = test0004_service.select_current_user_messages_list(param['chatId'])
-        # 取得items对象
-        message_list: list[test0004_entity.chars_message] = list(message_it)
+    message_it = test0004_service.select_current_user_messages_list(param['chatId'])
+    print(param['chatId'])
+    print(message_it)
+    print('xxxxxxxxxxxxbbbbbxxxxxxxxxxxxxxxx')
+    print(list(message_it))
+    # 取得items对象
+    message_list: list[test0004_entity.chars_message] = list(message_it)
 
-        messages = []
-        for message in message_list:
-            messages.append({ "role": "user", "content": message['message_q'] })
-            messages.append({ "role": "assistant", "content": message['message_a'] })
-        messages.append({ "role": "user", "content": param['data'] })
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    print(message_list)
+    messages = []
+    for message in message_list:
+        messages.append({ "role": "user", "content": message['message_q'] })
+        messages.append({ "role": "assistant", "content": message['message_a'] })
+    messages.append({ "role": "user", "content": param['data'] })
 
-        # 调用文心一言 API
-        text_contact = wenxin_api.main(messages)
-        # format
-        data = json.loads(text_contact)
+    # 调用文心一言 API
+    text_contact = wenxin_api.main(messages)
+    # format
+    data = json.loads(text_contact)
 
-        # 取得回答
-        result_message = data['result']
+    # 取得回答
+    result_message = data['result']
 
-        # 设置主键
-        message_id = "message_" + param['chatId'] + "_" + str(len(message_list) + 1)
-        # 插入数据
-        user = test0004_entity.chars_message(message_id, param['chatId'],
-                                             param['data'], result_message)
-        test0004_service.insert_new_message(user)
-    except HTTPException as e:
-        print("cosmos error")
-        raise HTTPException(status_code=e.status_code,detail=str(e.detail),headers=e.headers) from e
-    except Exception as e:
-        raise ValueError("Error occurred: " + str(e)) from e
+    # 设置主键
+    message_id = "message_" + param['chatId'] + "_" + str(len(message_list) + 1)
+    # 插入数据
+    user = test0004_entity.chars_message(message_id, param['chatId'],
+                                            param['data'], result_message)
+    test0004_service.insert_new_message(user)
+    # except HTTPException as e:
+    #     print("cosmos error")
+    #     raise HTTPException(status_code=e.status_code,detail=str(e.detail),headers=e.headers) from e
+    # except Exception as e:
+    #     raise ValueError(f"Error occurred: {e}") from e
 
     print(param)
     return {
@@ -152,31 +170,35 @@ def cosmos_update_contact_nm(param: dict):
     if "data" not in param or param['data'] == "":
         raise HTTPException(status_code=400, detail="参数data为空")
 
-    # # 连接到容器
-    # container = db.get_container_client("users")
-
-    # # 查询数据
-    # current_user = test0004_service.select_user_single(param['chatId'])
-
-    # # 读取数据
-    # read_item = container.read_item(item=current_user, partition_key=param['user'])
-
-    # read_item['userNm'] = param['data']
-    # response: test0004_entity.chats_user = container.replace_item(item=read_item, body=read_item)
-
     # 查询数据
     current_user = test0004_service.select_user_single(param['chatId'])
 
-    if current_user is None or "userNm" not in current_user or current_user['userNm'] == "":
-        raise HTTPException(status_code=400, detail=f"没有检索到数据{current_user['userNm']}")
+    # if current_user is None or "userNm" not in current_user or current_user['userNm'] == "":
+    #     raise HTTPException(status_code=400, detail="没有检索到数据")
 
-    current_user['userNm'] = param['data']
-    response: test0004_entity.chats_user = \
-        test0004_service.replace_user_item(current_user)
+    status: str = ""
+
+    if current_user is None or "userNm" not in current_user or current_user['userNm'] == "":
+        # 设置主键
+        user_key = str(uuid.uuid4())
+        # 插入数据
+        user = test0004_entity.chats_user(user_key, param['user'],
+                                          param['user'], param['user'], param['data'], "0")
+        response: test0004_entity.chats_user = test0004_service.insert_new_user(user)
+
+        status: str = "666"
+        # response: test0004_entity.chats_user = \
+        #     test0004_service.select_current_user(param['user'], user_key)
+    else:
+        current_user['userNm'] = param['data']
+        response: test0004_entity.chats_user = \
+            test0004_service.replace_user_item(current_user)
+
+        status: str = "777"
 
     print(response)
     return {
-        "status": "666",
+        "status": status,
         "entity": response,
     }
 
