@@ -9,6 +9,7 @@ from app.api.routes import dialogue_ctx
 from app.api.routes import cosmos_learn_v1
 from app.api.ai import wenxin_api
 from app.api.cosmos_api.test0004 import test0004_api
+from app.api.cosmos_api.test0005 import test0005_api
 
 app_router = APIRouter()
 
@@ -25,4 +26,7 @@ app_router.include_router(
 )
 app_router.include_router(
     test0004_api.router, prefix="/cosmos_api/test0004", tags=["cosmos_api"]
+)
+app_router.include_router(
+    test0005_api.router, prefix="/cosmos_api/test0005", tags=["cosmos_api_test0005"]
 )

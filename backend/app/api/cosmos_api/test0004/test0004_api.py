@@ -1,8 +1,11 @@
 """ Test0004 backend """
 
 import json
+import time
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
+import requests
 
 from app.api.cosmos_api.test0004 import test0004_entity
 from app.cosmos import db
@@ -130,8 +133,11 @@ def cosmos_send_message(param: dict):
         messages.append({ "role": "assistant", "content": message['message_a'] })
     messages.append({ "role": "user", "content": param['data'] })
 
+    print('xxxxxxxxxxxxbbbbbbccccxxxxxxxxxxxxxx')
     # 调用文心一言 API
     text_contact = wenxin_api.main(messages)
+    print(text_contact)
+    print('xxxxxxxxxxxxbbbbbbccccxxxxxxxxxxxxxx')
     # format
     data = json.loads(text_contact)
 
@@ -202,7 +208,6 @@ def cosmos_update_contact_nm(param: dict):
         "entity": response,
     }
 
-
 def temp_func1():
     """ 临时测试用例 """
     return '77'
@@ -216,3 +221,14 @@ def temp_func2():
 def temp_func3():
     """ 临时测试用例 """
     return temp_func1()
+
+
+##############################################################
+
+
+@router.post("/eb_stream")
+async def eb_stream(request: Request):
+    """流式聊天Temp"""
+    body = await request.json()
+    prompt = body.get("prompt")
+    return StreamingResponse(wenxin_api.gen_stream(prompt))

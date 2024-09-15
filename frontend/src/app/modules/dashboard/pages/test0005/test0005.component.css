@@ -1,3 +1,17 @@
+#contentContainer > code {
+    /* width: calc(100% - 45px); */
+    background-color: #333333;
+}
+
+.code {
+  /* width: calc(100% - 45px); */
+  background-color: #333333;
+  color: #ffffffbe;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
 .markdown {
     word-wrap: break-word;
   }

@@ -1,5 +1,6 @@
 """Test0004 Test"""
 
+import json
 from unittest import mock
 from fastapi.testclient import TestClient
 import pytest
@@ -628,9 +629,19 @@ def test_send_message(app, mocker: MockFixture, param):
     """发送消息，获取回答"""
     print("测试发送消息，获取回答")
 
-    mock_wenxin_api = mocker.patch("app.api.cosmos_api.wenxin_api.main", return_value = {
-        'result': 'message_a3'
-    })
+    mock_wenxin_api = mocker.patch("app.api.cosmos_api.wenxin_api.main", return_value = """{
+            "id":"as-znn1amcv8g",
+            "object":"chat.completion",
+            "created":1726207551,
+            "result":"message_a3",
+            "is_truncated":false,
+            "need_clear_history":false,
+            "usage":{
+                "prompt_tokens":13,
+                "completion_tokens":54,
+                "total_tokens":67
+            }
+        }""")
 
     with mock.patch('app.cosmos.db.get_container_client') as mock_xxx:
         mock_container = mock.MagicMock()
@@ -643,12 +654,13 @@ def test_send_message(app, mocker: MockFixture, param):
         ]
 
         # 不存在的场合
+        json_wenxin_return_value = json.loads(mock_wenxin_api.return_value)
         mock_container.create_item.return_value = [
             {
                 "id": "333", 
                 "chatId": param['chatId'], 
                 "message_q": param['data'], 
-                "message_a": mock_wenxin_api.return_value['result']
+                "message_a": json_wenxin_return_value['result']
             },
         ]
 
@@ -665,8 +677,8 @@ def test_send_message(app, mocker: MockFixture, param):
         if len(json_resp) > 0 :
             mock_container.query_items.assert_called()
             mock_container.query_items.assert_called_once_with(
-                query="SELECT * FROM users u WHERE u.userId = 'user1' AND u.id = @id",
-                parameters=[{'name': '@id', 'value': param['chatId']}],
+                query='SELECT * FROM messages c WHERE c.chatId = @chatId ORDER BY c._ts ASC',
+                parameters=[{'name': '@chatId', 'value': param['chatId']}],
                 enable_cross_partition_query=True
             )
 

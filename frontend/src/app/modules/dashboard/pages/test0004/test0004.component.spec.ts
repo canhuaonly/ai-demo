@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Test0004Component } from "./test0004.component";
 import { HttpParam, SingleMessage, Test0004Service } from "./test0004.component.api";
 import { of } from "rxjs";
+import { MarkdownModule } from "ngx-markdown";
 
 describe('测试画面: 0004', () => {
   let component: Test0004Component;
@@ -12,7 +13,7 @@ describe('测试画面: 0004', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Test0004Component, HttpClientTestingModule],
+      imports: [Test0004Component, HttpClientTestingModule, MarkdownModule.forRoot()],
       providers: [Test0004Service],
     })
     .compileComponents();
@@ -72,8 +73,8 @@ describe('测试画面: 0004', () => {
 
       // 测试子元素的内容是否正确
       // 获取子元素的子元素的第一个，第二个等，然后进行验证
-      expect(contactsListDiv.children[1].children[1].children[0].innerHTML).toContain('xxxNm');
-      expect(contactsListDiv.children[1].children[1].children[1].innerHTML).toContain('hello');
+      expect(contactsListDiv.children[1].children[0].children[1].children[0].innerHTML).toContain('xxxNm');
+      expect(contactsListDiv.children[1].children[0].children[1].children[1].innerHTML).toContain('hello');
 
       /* ==================== 聊天消息 ==================== */
       // 找到显示聊天消息的组件
@@ -190,7 +191,8 @@ describe('测试画面: 0004', () => {
     fixture.detectChanges();
 
     // 子元素的个数等于当前创建的chats的数量
-    expect(chats.childElementCount).toBe(3);
+    expect(chats.childElementCount).toBe(2);
+    expect(chats.children[1].childElementCount).toBe(2);
 
     // 测试按钮按下后画面发生变化，追加出的内容是否包含mock的返回值内容
     expect(chats.children[1].innerHTML.indexOf('点击开始聊天')).not.toBe(-1);
@@ -378,7 +380,7 @@ describe('画面 Test0004 修改会话名称', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Test0004Component, HttpClientTestingModule],
+      imports: [Test0004Component, HttpClientTestingModule, MarkdownModule.forRoot()],
       providers: [Test0004Service],
     })
     .compileComponents();

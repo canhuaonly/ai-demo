@@ -1,6 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { FormsModule } from '@angular/forms';
-import { MarkdownModule } from 'ngx-markdown';
 import { HttpParam, MessageContent, RecentContacts, Test0004Service } from './test0004.component.api';
 import { CommonModule } from '@angular/common';
 
@@ -11,7 +10,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     FormsModule
-    , MarkdownModule
     , CommonModule
   ],
 })
@@ -48,8 +46,15 @@ export class Test0004Component implements OnInit {
     }
   }
 
-  // 视图组装完成后触发
+  // 视图初始化完成后触发
+  // ngAfterViewInit() {
+  //   console.log(111);
+  //   this.scrollToBottom();
+  // }
+
+  // 视图变更后触发
   ngAfterViewChecked() {
+    console.log(222);
     this.scrollToBottom();
   }
 
@@ -134,11 +139,6 @@ export class Test0004Component implements OnInit {
     }
     console.log('New Chats');
   }
-
-  // // 中断聊天
-  // interrupt() {
-  //   console.log('中断');
-  // }
 
   // 切换会话
   changeTab(index: number) {
