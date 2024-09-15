@@ -1,6 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { FormsModule } from '@angular/forms';
-import { MarkdownModule } from 'ngx-markdown';
 import { Contacts, MessageContent, Test0002Service } from './test0002.component.api';
 import { of } from 'rxjs';
 
@@ -11,7 +10,6 @@ import { of } from 'rxjs';
   standalone: true,
   imports: [
     FormsModule,
-    MarkdownModule
   ],
 })
 

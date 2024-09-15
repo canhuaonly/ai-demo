@@ -11,57 +11,28 @@ export class Test0004Service {
     constructor(private http: HttpClient) {}
 
     // 获取当前用户
-    async getUser(entity: HttpParam): Promise<Array<LoginUser>> {
-        const res: Observable<Array<LoginUser>> = this.http.post<Array<LoginUser>>('/api/cosmos_api/test0004/get_user', entity)
-
-        return new Promise((resolve) => {
-            res.subscribe({ next: res => { resolve(res); } });
-          });
+    getUser(entity: HttpParam): Observable<LoginUser[]> {
+        return this.http.post<Array<LoginUser>>('/api/cosmos_api/test0004/get_user', entity)
     }
 
     // 获取最近联系人
-    async getContacts(entity: HttpParam): Promise<Array<RecentContacts>> {
-        const res: Observable<Array<RecentContacts>> = this.http.post<Array<RecentContacts>>('/api/cosmos_api/test0004/get_recent_contacts', entity)
-
-        return new Promise((resolve) => {
-            res.subscribe({ next: res => { resolve(res); } });
-          });
+    getContacts(entity: HttpParam): Observable<RecentContacts[]> {
+        return this.http.post<Array<RecentContacts>>('/api/cosmos_api/test0004/get_recent_contacts', entity)
     }
 
     // 获取最近聊天内容
-    async getMessageList(entity: HttpParam): Promise<Array<MessageContent>> {
-        const res: Observable<Array<MessageContent>> = this.http.post<Array<MessageContent>>('/api/cosmos_api/test0004/get_message', entity)
-
-        return new Promise((resolve) => {
-            res.subscribe({ next: res => { resolve(res) } });
-          });
+    getMessageList(entity: HttpParam): Observable<MessageContent[]> {
+        return this.http.post<Array<MessageContent>>('/api/cosmos_api/test0004/get_message', entity)
     }
     
     // 发送消息并取得回复
-    async sendSingleMessage(entity: HttpParam): Promise<SingleMessage> {
-        const res: Observable<SingleMessage> = this.http.post<SingleMessage>('/api/cosmos_api/test0004/send_message', entity)
-
-        return new Promise((resolve) => {
-            res.subscribe({ next: res => { resolve(res) } });
-        });
+    sendSingleMessage(entity: HttpParam): Observable<SingleMessage> {
+        return this.http.post<SingleMessage>('/api/cosmos_api/test0004/send_message', entity)
     }
     
     // 更新会话名称
-    async updateContactNm(entity: HttpParam): Promise<UpdateContactNm> {
-        const res: Observable<UpdateContactNm> = this.http.post<UpdateContactNm>('/api/cosmos_api/test0004/update_contact_nm', entity)
-
-        return new Promise((resolve) => {
-            res.subscribe({ next: res => { resolve(res) } });
-        });
-    }
-
-    // 创建新的聊天
-    createNewChats(index: number) {
-        const res = {
-            user_session_aka: '文心一言' + '(' + index + ')',
-            message: 'hi, 测试一个会话'
-        }
-        return res;
+    updateContactNm(entity: HttpParam): Observable<UpdateContactNm> {
+        return this.http.post<UpdateContactNm>('/api/cosmos_api/test0004/update_contact_nm', entity)
     }
 }
 

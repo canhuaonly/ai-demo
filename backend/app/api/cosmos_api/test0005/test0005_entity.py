@@ -3,15 +3,14 @@
 from pydantic import BaseModel
 
 
-def chats_user(item_id, user_id, chat_id, item_cd, item_nm, del_flg):
+def chats_user(item_id, user_id, contact_nm, last_msg, del_flg):
     """ 获取用户 """
     user = {
         "id": item_id,
-        "userId": user_id,
-        "chatId": chat_id,
-        "userCd": item_cd,
-        "userNm": item_nm,
-        "delFlg": del_flg,
+        "user_id": user_id,
+        "contact_nm": contact_nm,
+        "last_msg": last_msg,
+        "del_flg": del_flg,
     }
     return user
 

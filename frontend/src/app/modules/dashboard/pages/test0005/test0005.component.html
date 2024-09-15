@@ -18,10 +18,10 @@
             <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
             <div class="overflow-hidden">
                 <div class="group/item hover:bg-slate-100">
-                  <span class="font-bold" contentEditable="false" id="contactNm{{ $index }}" (blur)="editContactNm($index)">{{ item.userNm }}</span>
+                  <span class="font-bold" contentEditable="false" id="contactNm{{ $index }}" (blur)="editContactNm($index)">{{ item.contact_nm }}</span>
                   <span class="text-right group/edit invisible hover:bg-slate-200 group-hover/item:visible" (click)="editContactNm($index)" id="contactEe{{ $index }}">✍</span>
                 </div>
-                <p class="text-gray-500 text-sm whitespace-nowrap">{{ item.lastMsg }}</p>
+                <p class="text-gray-500 text-sm whitespace-nowrap">{{ item.last_msg }}</p>
             </div>
           </div>
         }
@@ -34,30 +34,23 @@
         <div class="flex items-center mb-4">
           <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
           <div>
-            <h3 class="font-bold">{{ current_user_nm }}</h3>
+            <h3 class="font-bold">{{ current_contact_nm }}</h3>
             <p class="text-gray-500 text-sm">💚Online</p>
           </div>
         </div>
         <!-- 聊天消息列表 -->
         <div #scrollMe class="flex flex-col space-y-4 h-5/6 overflow-auto scroll-smooth scroll-top p-4" id="messageList">
+          <p><textarea id="answer" rows="10" cols="50" readonly></textarea></p>
+          <img src="./assets/images/abort.png" alt="Avatar" class="w-6 h-6 rounded-full mr-2">
           @for (item of messageList; track $index) {
-            @if (item.message_q) {
-              <div class="flex justify-end items-center">
-                <div class="bg-blue-600 text-white p-2 rounded-lg ml-24">
-                  <p>{{ item.message_q }}</p>
-                </div>
-                <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full ml-2">
-              </div>
-            }
-            @if (item.message_a) {
-              <div class="flex items-center">
-                <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
-                  <div class="bg-white text-gray-600 p-2 rounded-lg mr-24">
-                    <p>{{ item.message_a }}</p>
-                    <!-- <markdown class="markdown" [data]="item.message_a"></markdown> -->
-                  </div>
-              </div>
-            }
+            <div class="flex justify-end items-center">
+              <div class="bg-blue-600 text-white p-2 rounded-lg ml-24 code123" [innerHTML]="item.message_q"></div>
+              <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full ml-2">
+            </div>
+            <div class="flex items-center">
+              <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+                <div class="bg-white text-gray-600 p-2 rounded-lg mr-24" [innerHTML]="item.message_a | markdown" id="message_a{{ $index }}"></div>
+            </div>
           }
         </div>
         <!-- 聊天消息输入框 -->
@@ -68,6 +61,7 @@
             <span *ngIf="isLoading">...</span>
           </button>
           <!-- <button class="bg-red-500 text-white py-2 px-4 ml-2 rounded-lg" (click)="interrupt()" id="interrupt">Interrupt</button> -->
+            <button class="bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-blue-800" (click)="temp_send()" id="temp_send" [disabled]="!sendInput">temp_send</button>
         </div>
       }
       @else {

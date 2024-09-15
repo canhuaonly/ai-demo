@@ -33,11 +33,20 @@ def select_recent_contacts_users_list(user):
     """获取最近联系人"""
 
     # 连接到容器
-    container = db.get_container_client("users")
+    container = db.get_container_client("contacts")
     # 查询数据
     return list(container.query_items(
-        query="SELECT * FROM users u WHERE u.userId = @userId AND u.delFlg = '0' ORDER BY u._ts DESC",
-        parameters=[{"name": "@userId", "value": user}],
+        query="""
+            SELECT
+              *
+            FROM
+              contacts c
+            WHERE
+              c.user_id = @user_id
+              AND c.del_flg = '0'
+            ORDER BY c._ts DESC
+            """,
+        parameters=[{"name": "@user_id", "value": user}],
         enable_cross_partition_query=True,
     ))
 
@@ -49,8 +58,8 @@ def select_recent_contacts_messages_list(user):
     container_message = db.get_container_client("messages")
     # 查询数据
     return list(container_message.query_items(
-            query="SELECT * FROM messages c WHERE c.chatId = @chatId ORDER BY c._ts DESC",
-            parameters=[{"name": "@chatId", "value": user}],
+            query="SELECT * FROM messages c WHERE c.chatId = @chat_id ORDER BY c._ts DESC",
+            parameters=[{"name": "@chat_id", "value": user}],
             enable_cross_partition_query=True,
     ))
 
@@ -62,8 +71,8 @@ def select_current_user_messages_list(chat_id):
     container = db.get_container_client("messages")
     # 查询数据
     return list(container.query_items(
-        query="SELECT * FROM messages c WHERE c.chatId = @chatId ORDER BY c._ts ASC",
-        parameters=[{"name": "@chatId", "value": chat_id}],
+        query="SELECT * FROM messages c WHERE c.chatId = @chat_id ORDER BY c._ts ASC",
+        parameters=[{"name": "@chat_id", "value": chat_id}],
         enable_cross_partition_query=True,
     ))
 
@@ -81,21 +90,33 @@ def insert_new_user(user):
     """插入新用户"""
 
     # 连接到容器
-    container = db.get_container_client("users")
+    container = db.get_container_client("contacts")
     # 插入数据
     results = container.create_item(body=user)
     return results
 
 
-def select_user_single(chat_id):
-    """获取当前选择的用户"""
+def select_user_single(user_id, chat_id):
+    """获取当前选择的会话"""
 
     # 连接到容器
-    container = db.get_container_client("users")
+    container = db.get_container_client("contacts")
     # 查询数据
     users_it = container.query_items(
-        query="SELECT * FROM users u WHERE u.userId = 'user1' AND u.id = @id",
-        parameters=[{"name": "@id", "value": chat_id}],
+        query="""
+          SELECT
+            *
+          FROM
+            contacts c
+          WHERE
+            c.user_id = @user_id
+            AND c.id = @id
+            AND c.del_flg = '0'
+        """,
+        parameters=[
+            {"name": "@user_id", "value": user_id},
+            {"name": "@id", "value": chat_id}
+        ],
         enable_cross_partition_query=True,
     )
     results = list(users_it)
