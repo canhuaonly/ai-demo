@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Test0004Component } from "./test0004.component";
 import { HttpParam, SingleMessage, Test0004Service } from "./test0004.component.api";
 import { of } from "rxjs";
-import { MarkdownModule } from "ngx-markdown";
 
 describe('测试画面: 0004', () => {
   let component: Test0004Component;
@@ -13,7 +12,7 @@ describe('测试画面: 0004', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Test0004Component, HttpClientTestingModule, MarkdownModule.forRoot()],
+      imports: [Test0004Component, HttpClientTestingModule],
       providers: [Test0004Service],
     })
     .compileComponents();
@@ -380,7 +379,7 @@ describe('画面 Test0004 修改会话名称', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Test0004Component, HttpClientTestingModule, MarkdownModule.forRoot()],
+      imports: [Test0004Component, HttpClientTestingModule],
       providers: [Test0004Service],
     })
     .compileComponents();
