@@ -3,23 +3,39 @@
 	"compileOnSave": false,
 	"compilerOptions": {
     "baseUrl": "./",
+    // 编译后的文件存到到哪个目录下,默认是每一个ts文件的当前目录,,下面的配置就是把ts编译到build目录下
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
+    // 严格模式将会打开下面的几个选项
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
+    // 用于检查函数是否有返回值，设为true后，如果函数没有返回值则会提示
     "noImplicitReturns": true,
+    // 用于检查switch中是否有case没有使用break跳出switch
     "noFallthroughCasesInSwitch": true,
+    // 用来指定编译时是否生成.map文件
     "sourceMap": true,
     "declaration": false,
+    // 当target为'ES5' or 'ES3'时，为'for-of', spread, and destructuring'中的迭代器提供完全支持
     "downlevelIteration": true,
+    // experimentalDecorators用于指定是否启用实验性的装饰器特性
     "experimentalDecorators": true,
+    // 用于选择模块解析策略，有'node'和'classic'两种类型
     "moduleResolution": "node",
+    // 是否引入npm包tslib中的辅助函数,__extends等 
     "importHelpers": true,
+    // 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'
     "target": "ES2022",
+    // 指定使用模块: 'commonjs', 'amd', 'system', 'umd' or 'es2015'
     "module": "es2020",
     "resolveJsonModule": true,
+    // 用来指定允许从没有默认导出的模块中默认导入
     "allowSyntheticDefaultImports": true,
+    /* 注意：如果未指定--lib，则会注入默认的librares列表。注入的默认库为：
+       对于 --target ES5: DOM,ES5,ScriptHost
+       对于 --target ES6: DOM,ES6,DOM.Iterable,ScriptHost
+       TS 绝不会在您的代码中注入polyfill,所以需要你自己制定编译lib */
     "lib": [
       "es2021",
       "dom"

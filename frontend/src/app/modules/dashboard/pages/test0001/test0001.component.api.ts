@@ -23,7 +23,7 @@ export function fetchData() {
     // 模拟接口调用，这里可以根据实际情况改写
     return new Promise(resolve => {
         setTimeout(() => {
-        resolve(1000);
+            resolve(1000);
         }, 1000);
     });
 }

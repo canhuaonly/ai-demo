@@ -3,7 +3,7 @@ import { environment } from './environments/environment'
 import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { REPEAT_PIPE_CONFIG_TOKEN, RepeatPipeConfig } from '../markdown.pipe';
 
 if (environment.production) {
@@ -16,7 +16,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideHttpClient(), 
+        provideHttpClient(withFetch()), 
         importProvidersFrom(BrowserModule, AppRoutingModule, HttpClient),
         { provide: REPEAT_PIPE_CONFIG_TOKEN, useValue: {} satisfies RepeatPipeConfig },
     ]

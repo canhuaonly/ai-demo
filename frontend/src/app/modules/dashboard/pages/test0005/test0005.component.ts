@@ -2,8 +2,11 @@ import { Component, ViewChild, ElementRef, OnInit, ViewEncapsulation } from "@an
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import markdownIt from 'markdown-it';
-import { Contacts, HttpParam, Messages, Test0005Service } from './test0005.component.api';
+import { Contacts, HttpParam, Messages, SendParam, Test0005Service } from './test0005.component.api';
 import { RepeatPipe } from '../../../../../../markdown.pipe';
+import { interval, map } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+
 
 @Component({
   selector: 'app-podcast',
@@ -38,12 +41,15 @@ export class Test0005Component implements OnInit {
   current_partition_key: string = '';
   // 当前画面最大的Message条数
   current_message_index: number = -1;
+  // 当前选择的会话的index
+  current_selected_index: number = -1;
   // 上一次点击的index
   beforeIndex: number = -1;
   // 加载
   isLoading = false;
+  isScrollBottom = false
 
-  constructor(private service: Test0005Service, private pipe: RepeatPipe) { }
+  constructor(private service: Test0005Service, private pipe: RepeatPipe, private http: HttpClient) { }
 
   // 初期化
   ngOnInit() {
@@ -52,20 +58,56 @@ export class Test0005Component implements OnInit {
     }
   }
 
-  // 视图初始化完成后触发
-  // ngAfterViewInit() {
-  //   console.log(111);
-  //   this.scrollToBottom();
-  // }
+  // // 视图初始化完成后触发
+  // ngAfterViewInit() { }
 
   // 视图变更后触发
   ngAfterViewChecked() {
-    console.log(222);
-    this.scrollToBottom();
+    if (this.isScrollBottom) {
+      this.scrollToBottom();
+      this.isScrollBottom = false
+    }
   }
 
   // 初期数据取得
   async getData() {
+
+    // // 订阅发布主逻辑
+    // const observer1 = new concrete_observer("小明");
+    // const observer2 = new concrete_observer("小强");
+    // const observer3 = new concrete_observer("小红");
+    // const subject_gupiao = new concrete_subject_gupiao("股票");
+    // const subject_nba = new concrete_subject_nba("NBA");
+    // console.log("小明订阅了股票");
+    // subject_gupiao.subscribe(observer1);
+    // console.log("小明订阅了NBA");
+    // subject_nba.subscribe(observer1);
+    // console.log("小强订阅了股票");
+    // subject_gupiao.subscribe(observer2);
+    // console.log("小红订阅了NBA");
+    // subject_nba.subscribe(observer3);
+    // console.log("---------------------------------");
+    // subject_gupiao.update_message("大盘下跌");
+    // subject_nba.update_message("骑士总冠军");
+    // console.log("---------------------------------");
+    // subject_gupiao.publish();
+    // console.log("---------------------------------");
+    // subject_nba.publish();
+    // console.log("---------------------------------");
+    // console.log("小明取消订阅股票");
+    // subject_gupiao.unsubscribe(observer1);
+    // console.log("小明取消订阅NBA");
+    // subject_nba.unsubscribe(observer1);
+    // console.log("---------------------------------");
+    // subject_gupiao.update_message("大盘上涨");
+    // subject_nba.update_message("骑士蝉联总冠军");
+    // console.log("---------------------------------");
+    // subject_gupiao.publish();
+    // console.log("---------------------------------");
+    // subject_nba.publish();
+    // console.log("---------------------------------");
+
+    /*------------------------------------*/
 
     const req: HttpParam = { data: 'wangtao', user: '', chat_id: '' }
 
@@ -132,6 +174,8 @@ export class Test0005Component implements OnInit {
 
     console.log('切换会话' + index);
 
+    this.current_selected_index = index;
+
     const element = document.getElementById("contactNm" + index) as HTMLInputElement
     if (element) {
       if (element.contentEditable === 'true') return
@@ -177,39 +221,41 @@ export class Test0005Component implements OnInit {
           this.messageList[i].message_a = message_a
         }
       }
+
+      this.isScrollBottom = true
     });
   }
 
   // 发送消息
-  async send() {
+  // async send() {
 
-    let sendInput = '';
+  //   let sendInput = '';
 
-    const sendInputElement = document.getElementById('sendInput') as HTMLInputElement;
-    sendInput = sendInputElement && sendInputElement.value ? sendInputElement.value : this.sendInput;
+  //   const sendInputElement = document.getElementById('sendInput') as HTMLInputElement;
+  //   sendInput = sendInputElement && sendInputElement.value ? sendInputElement.value : this.sendInput;
 
-    if (this.isJapanese(sendInput) || !sendInput) {
-      console.log('err: 只接受简体中文或英文字母');
-      return
-    }
+  //   if (this.isJapanese(sendInput) || !sendInput) {
+  //     console.log('err: 只接受简体中文或英文字母');
+  //     return
+  //   }
 
-    this.isLoading = true;
+  //   this.isLoading = true;
 
-    const req: HttpParam = { data: sendInput, user: this.current_user_id, chat_id: this.current_chat_id }
-    const entity: Messages = { chat_id: '', message_q: sendInput, message_a: '', del_flg: '0'}
-    this.messageList.push(entity)
-    this.contactsList[this.beforeIndex].last_msg = sendInput
-    this.sendInput = ''
-    this.service.sendSingleMessage(req).subscribe(res => {
-      if (res.status === '666') {
-        this.messageList[this.messageList.length - 1].chat_id = res.entity.id
-        this.messageList[this.messageList.length - 1].message_a = res.entity.last_msg
-        this.contactsList[this.beforeIndex].last_msg = res.entity.last_msg
-      }
-      this.scrollToBottom();
-      this.isLoading = false;
-    })
-  }
+  //   const req: HttpParam = { data: sendInput, user: this.current_user_id, chat_id: this.current_chat_id }
+  //   const entity: Messages = { chat_id: '', message_q: sendInput, message_a: '', del_flg: '0'}
+  //   this.messageList.push(entity)
+  //   this.contactsList[this.beforeIndex].last_msg = sendInput
+  //   this.sendInput = ''
+  //   this.service.sendSingleMessage(req).subscribe(res => {
+  //     if (res.status === '666') {
+  //       this.messageList[this.messageList.length - 1].chat_id = res.entity.id
+  //       this.messageList[this.messageList.length - 1].message_a = res.entity.last_msg
+  //       this.contactsList[this.beforeIndex].last_msg = res.entity.last_msg
+  //     }
+  //     this.scrollToBottom();
+  //     this.isLoading = false;
+  //   })
+  // }
 
   // 滚动
   scrollToBottom(): void {
@@ -255,8 +301,8 @@ export class Test0005Component implements OnInit {
       }
       // Enter => 发送消息  
       else {
-        if (!this.isLoading) {
-          this.send();
+        if (!this.isLoading && this.sendInput) {
+          this.temp_send();
         }
       }
     }
@@ -264,29 +310,51 @@ export class Test0005Component implements OnInit {
 
   // ----------------------------------------------------------------------------------------------
 
-  current_text = document.getElementById('answer');
-  text = "";
-  char_index = 0
+  message_a_innerHTML = "";
+  current_message_a = "";
+
+  // 创建监听器实例对象
+  controller = new AbortController();
 
   temp_send() {
     
-    this.text = "";
+    this.message_a_innerHTML = "";
+    this.current_message_a = "";
+    
+    this.isLoading = true;
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this
 
+    // 获取画面输入框
     let inputValue = '';
-
     const sendInputElement = document.getElementById('sendInput') as HTMLInputElement;
     inputValue = sendInputElement && sendInputElement.value ? sendInputElement.value : this.sendInput;
 
+    /**
+     * Request Param:
+     *   data: question
+     *   user: user id
+     *   chat_id: chat id
+     */
     const req: HttpParam = { data: inputValue, user: this.current_user_id, chat_id: this.current_chat_id}
 
+    // 画面的消息列表追加1条（问题）
     const entity: Messages = { chat_id: '', message_q: inputValue, message_a: '', del_flg: '0'}
     this.messageList.push(entity)
 
-    // 调用服务端的流式接口, 修改为自己的服务器地址和端口号
-    this.service.sendMessageStream(req).then(response => {
+    this.isScrollBottom = true
+
+    // 画面输入框内容清空
+    this.sendInput = ''
+
+    // 从AbortController导出signal对象
+    const { signal } = this.controller;
+
+    // 调用服务端的流式接口
+    this.service.sendMessageStream(req, signal).then(response => {
+
+      console.log('全部返回值:' + response);
       return response.body;
     }).then(body => {
 
@@ -295,31 +363,42 @@ export class Test0005Component implements OnInit {
       if (body) {
         const reader = body.getReader();
         const decoder = new TextDecoder();
-        async function read(): Promise<unknown> {
+        async function read() {
           const { done, value } = await reader.read();
-          if (done) { // 读取完成
+          if (done) {
+            // 读取完成
+            console.log('读取完成')
+
+            // 登陆数据
+            that.send_update(that.current_message_a)
             return;
           }
+
+          // 解码
           const data = decoder.decode(value, { stream: true });
-          // console.log("text：" + that.text)
-          console.log("数据：" + data)
-          console.log("数据1：" + JSON.parse(data))
-          console.log("数据2：" + JSON.parse(data).result)
-          let cunrrent_str = JSON.parse(data).result || '';
-          if (cunrrent_str !== '') {
-            cunrrent_str = md.render(cunrrent_str)
-          }
-          that.text += cunrrent_str || '';
-          // that.type(); // 打字机效果输出
+          console.log("data:" + data)
+          // if (data) {
+            // JSON转换
+            const json_data = JSON.parse(data).result || ''
+            // 设定到当前流式传输的回答（无Markdown格式）
+            that.current_message_a += json_data;
+            // 将解码后的值转成Markdown格式
+            const md_data = md.render(that.current_message_a)
+            // markdown格式的数据再利用管道继续转换
+            const pipe_data = that.pipe.transform(md_data) || '';
+            // 设定到当前流式传输的回答（Markdown格式）
+            that.message_a_innerHTML = pipe_data;
+            // console.log("Answer 转换前:" + json_data)
+            // console.log("Answer 转换后:" + pipe_data)
+            // console.log("Answer 当前值:" + that.message_a_innerHTML)
+            // 将解码后的值赋值到画面
+            const sendInputElement = document.getElementById(`${'message_a'}${that.messageList.length - 1}`) as HTMLInputElement;
+            sendInputElement.innerHTML = that.message_a_innerHTML
+            that.contactsList[that.current_selected_index].last_msg = that.current_message_a
 
-          // const sendInputElement = document.getElementById(`${'message_a'}${that.messageList.length - 1}`) as HTMLInputElement;
-          // const txt = sendInputElement && sendInputElement.value ? sendInputElement.value : '';
-
-          // const pipe = new RepeatPipe();
-
-          const sendInputElement = document.getElementById(`${'message_a'}${that.messageList.length - 1}`) as HTMLInputElement;
-          sendInputElement.innerHTML = that.pipe.transform(that.text);
-
+            // 滚动到底部
+            that.isScrollBottom = true
+          // }
           return read();
         }
         return read();
@@ -327,26 +406,76 @@ export class Test0005Component implements OnInit {
         return Promise.resolve(null);
       }
     }).catch(error => {
-      console.error('发生错误:', error);
+      if (error.name === 'AbortError') {
+        // 手动中断流
+        console.log('abort message:', error.message);
+      } else {
+        // 处理其他类型的异常
+        console.error('发生错误:', error);
+      }
     });
   }
 
-  type() {
-    // const enableCursor = false;  // 启用光标效果
-    // if (this.char_index < this.text.length) {
+  // 中止
+  abort() {
+    console.log('Abort.');
+    this.controller.abort();
+    this.controller = new AbortController();
+    this.send_update(this.current_message_a)
+  }
 
-      const sendInputElement = document.getElementById('answer') as HTMLInputElement;
-      const txt = sendInputElement && sendInputElement.value ? sendInputElement.value : this.sendInput;
+  // 送信完成后登录/更新数据
+  send_update(message_a: string) {
 
-      // const cursor = enableCursor ? "|" : "";
-      // if (enableCursor && txt.endsWith("|")) {
-      //   txt = txt.slice(0, -1);
-      // }
+    const req: SendParam = { message_q: this.messageList[this.messageList.length - 1].message_q, message_a: message_a, user_id: this.current_user_id, chat_id: this.current_chat_id}
+    console.log('Processing complete:', req);
 
-      const sendInputElement1 = document.getElementById('answer') as HTMLInputElement;
-      sendInputElement1.value = txt + this.text.charAt(this.char_index);
-      this.char_index++;
-      // setTimeout(this.type, 20);  // 打字机速度控制, 每秒5个字
-    // }
+    // 更新
+    this.service.updateSend(req).subscribe(res => {
+      if (res.status === '666') {
+        this.messageList[this.messageList.length - 1].chat_id = res.entity.id
+        this.contactsList[this.beforeIndex].last_msg = res.entity.last_msg
+      }
+      this.isLoading = false;
+      console.log('Update complete:', res);
+    })
+  }
+
+  // char_index = 0
+  // type() {
+  //   const enableCursor = false;  // 启用光标效果
+  //   if (this.char_index < this.text.length) {
+
+  //     const sendInputElement = document.getElementById('answer') as HTMLInputElement;
+  //     const txt = sendInputElement && sendInputElement.value ? sendInputElement.value : this.sendInput;
+
+  //     const cursor = enableCursor ? "|" : "";
+  //     if (enableCursor && txt.endsWith("|")) {
+  //       txt = txt.slice(0, -1);
+  //     }
+
+  //     const sendInputElement1 = document.getElementById('answer') as HTMLInputElement;
+  //     sendInputElement1.value = txt + this.message_a_innerHTML.charAt(this.char_index);
+  //     this.char_index++;
+  //     setTimeout(this.type, 20);  // 打字机速度控制, 每秒5个字
+  //   }
+  // }
+  
+  
+  inputStreamData = [1];
+  outputStreamData: number[] = [];
+  temp_send2() {
+    interval(1500).pipe(
+      map(output => {
+        console.log('output:', output)
+        return output % this.inputStreamData.length
+      }),
+      map(index => {
+        return this.inputStreamData[index]
+      })
+    ).subscribe(element => {
+      this.outputStreamData.push(element);
+      console.log('444', this.outputStreamData)
+    });
   }
 }

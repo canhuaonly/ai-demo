@@ -112,7 +112,7 @@ def test0005_cosmos_update_contact_nm(param: dict):
         raise HTTPException(status_code=400, detail="参数data为空")
 
     # 查询数据
-    current_user = test0005_service.select_user_single(param['user'], param['chat_id'])
+    current_user = test0005_service.select_contacts_single(param['user'], param['chat_id'])
 
     if current_user is None or "contact_nm" not in current_user or current_user['contact_nm'] == "":
         # 设置主键
@@ -150,12 +150,12 @@ async def test0005_eb_stream(request: Request):
 
     body = await request.json()
     message_q = body.get("data")
-    user = body.get("user")
+    user_id = body.get("user")
     chat_id = body.get("chat_id")
 
     if message_q is None or message_q == "":
         raise HTTPException(status_code=400, detail="参数data错误")
-    if user is None or user == "":
+    if user_id is None or user_id == "":
         raise HTTPException(status_code=400, detail="参数user错误")
     if chat_id is None or chat_id == "":
         raise HTTPException(status_code=400, detail="参数chat_id错误")
@@ -171,7 +171,7 @@ async def test0005_eb_stream(request: Request):
         messages.append({ "role": "assistant", "content": message['message_a'] })
     messages.append({ "role": "user", "content": message_q })
 
-    resp = gen_stream(message_q, chat_id)
+    resp = gen_stream(message_q, user_id, chat_id)
     resp_stream =  StreamingResponse(resp)
 
     # response = wenxin_api.get_stream_response(prompt)
@@ -188,13 +188,14 @@ async def test0005_eb_stream(request: Request):
     return resp_stream
 
 
-def gen_stream(message_q, chat_id):
+def gen_stream(message_q, user_id, chat_id):
     """获取流式回复"""
 
     print(f"问题：{message_q}")
     print("开始生成流式回复")
 
     message_a = ""
+    print(f"param:{user_id}, {chat_id}, {message_a}")
 
     response = wenxin_api.get_stream_response(message_q)
     for chunk in response.iter_lines():
@@ -202,10 +203,10 @@ def gen_stream(message_q, chat_id):
         if chunk[:5] == "data:":
             chunk = chunk[5:]
             # print(f"回复消息1：{chunk}")
-            json_chunk = json.loads(chunk)
-            message_a = message_a + json_chunk['result']
-            if json_chunk['is_end']:
-                insert_message(chat_id, message_q, message_a)
+            # json_chunk = json.loads(chunk)
+            # message_a = message_a + json_chunk['result']
+            # if json_chunk['is_end']:
+                # insert_message(user_id, chat_id, message_q, message_a)
             # else:
                 # print(f"回复消息：{results_str}")
                 # print(f"回复消息：{json_chunk['result']}")
@@ -213,15 +214,40 @@ def gen_stream(message_q, chat_id):
         # time.sleep(0.01)
 
 
-def insert_message(chat_id, message_q, message_a):
-    """获取流式回复"""
+@router.post("/update_send")
+def update_send(param: dict):
+    """
+    插入message数据
+    更新contacts数据
+    """
+
+    if param is None:
+        raise HTTPException(status_code=400, detail="参数为空")
+    if "message_q" not in param or param['message_q'] == "":
+        raise HTTPException(status_code=400, detail="参数message_q为空")
+    if "message_a" not in param or param['message_a'] == "":
+        raise HTTPException(status_code=400, detail="参数message_a为空")
+    if "chat_id" not in param or param['chat_id'] == "":
+        raise HTTPException(status_code=400, detail="参数chat_id为空")
+    if "user_id" not in param or param['user_id'] == "":
+        raise HTTPException(status_code=400, detail="参数user_id为空")
 
     # 设置主键
     message_key = "message_" + str(uuid.uuid4())
-    # 插入数据
-    user = test0005_entity.chars_message(message_key, chat_id, message_q, message_a)
-    test0005_service.insert_new_message(user)
+    # 插入消息表
+    messages = test0005_entity.chars_message(message_key, param['chat_id'], param['message_q'], param['message_a'])
+    test0005_service.insert_new_message(messages)
 
-    print(f"终于结束了{message_q}")
-    print(f"终于结束了{message_a}")
-    print("终于结束了")
+    # 更新会话表
+    contacts = test0005_service.select_contacts_single(param['user_id'], param['chat_id'])
+    contacts['last_msg'] = param['message_a']
+    contacts_entity = test0005_service.replace_contacts_item(contacts)
+
+    print(f"question：{param['message_q']}")
+    print(f"answer：{param['message_a']}")
+    print("finally~")
+
+    return {
+        "status": "666",
+        "entity": contacts_entity,
+    }
