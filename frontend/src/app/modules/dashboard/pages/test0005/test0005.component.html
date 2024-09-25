@@ -57,7 +57,7 @@
         <div class="flex items-center mt-4 fixed bottom-20 w-3/5">
           <textarea placeholder="Type your message..." class="w-full border-gray-300 border rounded-lg py-2 px-4 mr-2 resize-none" [(ngModel)]="sendInput" id="sendInput" (keydown)="sendOrLine($event)"></textarea>
           <!-- <button class="bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-blue-800" (click)="send()" id="send" [disabled]="!sendInput"> -->
-          <button class="bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-blue-800" (click)="temp_send()" id="temp_send" [disabled]="!sendInput">
+          <button class="bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-blue-800" (click)="temp_send3()" id="temp_send" [disabled]="!sendInput">
             <span *ngIf="!isLoading">Send</span>
             <span *ngIf="isLoading">...</span>
           </button>

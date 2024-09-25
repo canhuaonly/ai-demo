@@ -3,9 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import markdownIt from 'markdown-it';
 import { Contacts, HttpParam, Messages, SendParam, Test0005Service } from './test0005.component.api';
-import { RepeatPipe } from '../../../../../../markdown.pipe';
+import { RepeatPipe } from '../../../../core/utils/markdown.pipe';
 import { interval, map } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpDownloadProgressEvent, HttpEvent } from "@angular/common/http";
 
 
 @Component({
@@ -477,5 +477,55 @@ export class Test0005Component implements OnInit {
       this.outputStreamData.push(element);
       console.log('444', this.outputStreamData)
     });
+  }
+
+
+
+  temp_send3() {
+
+    console.log('Processing Start')
+
+    const entity: HttpParam = {
+      data: "Angular的订阅模式是什么",
+      user: "user1",
+      chat_id: "dcf071ee-d13c-4f4c-93ee-17fd170b6334"
+    }
+
+    // this.http.post('/api/cosmos_api/test0005/send_message_stream', entity, {observe: 'body', responseType: 'text'})
+
+    let streamMessage: string = '';
+    let chunkMessage: string = '';
+    let beforeMessageLength: number = 0;
+
+
+    this.http.post(
+      '/api/cosmos_api/test0005/send_message_stream',
+      entity,
+      {observe: 'events', responseType: 'text', reportProgress: true}
+    ).subscribe({
+      next(event: HttpEvent<string>) {
+        // console.log('data:', event)
+
+        // console.log('event.type:', event.type)
+        streamMessage = (event as HttpDownloadProgressEvent).partialText?.toString() || '';
+        chunkMessage = streamMessage.slice(beforeMessageLength);
+        beforeMessageLength = streamMessage.length;
+
+        if (chunkMessage !== '') {
+
+          const json_data = JSON.parse(chunkMessage).result || ''
+          console.log('current data:', json_data)
+
+        } else {
+          // console.log('current data:', null)
+        }
+      },
+      error(err) {
+        console.log('Processing Error:', err)
+      },
+      complete() {
+        console.log('Processing Complete')
+      }
+    })
   }
 }

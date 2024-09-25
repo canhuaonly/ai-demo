@@ -54,7 +54,6 @@ export class Test0004Component implements OnInit {
 
   // 视图变更后触发
   ngAfterViewChecked() {
-    console.log(222);
     this.scrollToBottom();
   }
 

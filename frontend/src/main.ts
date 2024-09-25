@@ -4,11 +4,11 @@ import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
-import { REPEAT_PIPE_CONFIG_TOKEN, RepeatPipeConfig } from '../markdown.pipe';
+import { REPEAT_PIPE_CONFIG_TOKEN, RepeatPipeConfig } from './app/core/utils/markdown.pipe';
 
 if (environment.production) {
     enableProdMode()
-    //show this warning only on prod mode
+    // show this warning only on prod mode
     if (window) {
         selfXSSWarning();
     }

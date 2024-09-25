@@ -3,7 +3,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: ai-demo",
+      "name": "frontend: debug",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "ng serve"
+    },
+    {
+      "name": "backend: debug",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -18,20 +26,6 @@
       "console": "integratedTerminal", // 在集成的终端中运行  
       // "internalConsoleOptions": "neverOpen", // 不打开内部控制台  
       "justMyCode": true // 仅调试我的代码（不进入标准库或第三方库）  
-    },
-    {
-      "name": "ng serve",
-      "type": "chrome",
-      "request": "launch",
-      "preLaunchTask": "npm: start",
-      "url": "http://localhost:4200/"
-    },
-    {
-      "name": "ng test",
-      "type": "chrome",
-      "request": "launch",
-      "preLaunchTask": "npm: test",
-      "url": "http://localhost:9876/debug.html"
     }
   ]
 }

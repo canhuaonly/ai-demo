@@ -37,6 +37,31 @@
           }
         }
       }
-    }
+    },
+    {
+      "label": "ng serve",
+      "type": "shell",
+      "command": "ng serve",
+      "isBackground": true,
+      "options": {
+          "cwd": "${workspaceFolder}/frontend"  // コマンドを実行するディレクトリのパス
+      },
+      "problemMatcher": {
+          "owner": "typescript",
+          "source": "ts",
+          "applyTo": "closedDocuments",
+          "fileLocation": ["relative", "${workspaceFolder}/frontend"],
+          "pattern": "$tsc",
+          "background": {
+              "activeOnStart": true,
+              "beginsPattern": {
+                  "regexp": "(.*?)"
+              },
+              "endsPattern": {
+                  "regexp": "complete. | Failed to compile."
+              }
+          }
+      }
+  }
   ]
 }

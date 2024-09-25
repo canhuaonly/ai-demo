@@ -21,6 +21,10 @@ def test0005_cosmos_get_user(param: dict):
 
     if param is None or "data" not in param or param['data'] == "":
         raise HTTPException(status_code=400, detail="参数错误1")
+    
+
+    for item in range(10, 14):
+        print(f'item:{item}')
 
     # 检索执行
     current_user = test0005_service.select_login_user_list(param['data'])
