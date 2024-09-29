@@ -1,0 +1,5 @@
+# Personal practice
+
+
+* Angular
+* Python
