@@ -20,7 +20,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --proxy-config proxy.config.json",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "jest --coverage",
@@ -42,6 +42,7 @@
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/typography": "^0.5.4",
+    "@testing-library/jest-dom": "^6.5.0",
     "angular-svg-icon": "^13.0.0",
     "apexcharts": "^3.35.3",
     "axios": "^1.7.5",

@@ -26,6 +26,18 @@ def chars_message(message_id, chat_id, message_q, message_a):
     return message
 
 
+def chars_contact(contact_id, user_id, contact_nm, last_msg, del_flg):
+    """ 聊天内容 """
+    contact = {
+        "id": contact_id,
+        "user_id": user_id,
+        "contact_nm": contact_nm,
+        "last_msg": last_msg,
+        "del_flg": del_flg
+    }
+    return contact
+
+
 class HttpParam(BaseModel):
     """ Param """
     data: str

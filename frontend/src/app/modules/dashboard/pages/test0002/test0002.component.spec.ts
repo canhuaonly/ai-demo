@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Test0002Component } from './test0002.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MessageContent, SingleMessage, Test0002Service } from "./test0002.component.api";
-import  '../../../../../jestGlobalMocks';
 import { of } from 'rxjs';
 // const test0002Service = require('./test0002.component.api')
 

@@ -6,10 +6,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.ai import database
-from app.api.ai import entity
-from app.api.ai import wenxin
-from app.api.ai import models
+from app.api.cosmos_api.test0002 import (test0002_entity, test0002_models)
+from app.core import config
+from app.api.cosmos_api import wenxin_api
 
 router = APIRouter()
 
@@ -20,7 +19,7 @@ def get_db():
     This is test func
     """
     try:
-        db = database.SessionLocal()
+        db = config.SessionLocal()
         yield db
     finally:
         db.close()
@@ -37,25 +36,25 @@ async def get_lyric(param: str):
         return {"message": "error: time out"}
 
 
-@router.get("/wenxin", response_model=List[entity.Wenxin])
+@router.get("/wenxin", response_model=List[test0002_entity.Wenxin])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     This is test func
     """
-    messages = db.query(models.Wenxin).offset(skip).limit(limit).all()
+    messages = db.query(test0002_models.Wenxin).offset(skip).limit(limit).all()
     return messages
 
 
-@router.get("/getUser", response_model=List[entity.User])
+@router.get("/getUser", response_model=List[test0002_entity.User])
 def get_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     This is test func
     """
-    users = db.query(models.User).offset(skip).limit(limit).all()
+    users = db.query(test0002_models.User).offset(skip).limit(limit).all()
     return users
 
 
-@router.get("/getContactsList", response_model=List[entity.Select1])
+@router.get("/getContactsList", response_model=List[test0002_entity.Select1])
 def get_contacts_list(db: Session = Depends(get_db)):
     """
     This is test func
@@ -112,14 +111,14 @@ def get_contacts_list(db: Session = Depends(get_db)):
 
 
 @router.post("/sendMessage")
-async def send_message(param: entity.Wenxin):
+async def send_message(param: test0002_entity.Wenxin):
     """
     This is test func
     """
     db: Session = next(get_db())
     me_wenxin = create_wenxin(db=db, param=param)
 
-    all_messages = db.query(models.Wenxin).all()
+    all_messages = db.query(test0002_models.Wenxin).all()
     return_messages = [me_wenxin]
 
     messages = []
@@ -129,12 +128,12 @@ async def send_message(param: entity.Wenxin):
             "content": message.message
         })
 
-    text_contact = wenxin.main(messages)
+    text_contact = wenxin_api.main(messages)
     data = json.loads(text_contact)
 
     result_message = data['result']
 
-    it_wenxin = models.Wenxin(user_cd='assistant', user_nm='文心一言', message=result_message)
+    it_wenxin = test0002_models.Wenxin(user_cd='assistant', user_nm='文心一言', message=result_message)
     it_wenxin = create_wenxin(db=db, param=it_wenxin)
 
     return_messages.append(it_wenxin)
@@ -148,19 +147,19 @@ async def send_message(param: entity.Wenxin):
     }
 
 
-def create_wenxin(db: Session, param: entity.Wenxin):
+def create_wenxin(db: Session, param: test0002_entity.Wenxin):
     """
     This is test func
     """
     param.wenxin_id = None
 
-    db_user = db.query(models.Wenxin).order_by(models.Wenxin.wenxin_id.desc()).first()
+    db_user = db.query(test0002_models.Wenxin).order_by(test0002_models.Wenxin.wenxin_id.desc()).first()
     if db_user:
         param.message_order = db_user.message_order + 1
     else:
         param.message_order = 1
 
-    db_wenxin = models.Wenxin(
+    db_wenxin = test0002_models.Wenxin(
         user_cd=param.user_cd,
         user_nm=param.user_nm,
         message_order=param.message_order,

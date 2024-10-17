@@ -13,6 +13,9 @@ from pydantic import (
     model_validator,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from typing_extensions import Self
 
 
@@ -82,10 +85,10 @@ class Settings(BaseSettings):
     # DATABASE
     # sqlite
     DATABASE_URI: str = (
-        "sqlite:///D:/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
+        "sqlite:///../../db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
     )
     ASYNC_DATABASE_URI: str = (
-        "sqlite+aiosqlite:///D:/db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
+        "sqlite+aiosqlite:///../../db/ts_yi.db?check_same_thread=False"  # Sqlite(异步)
     )
     # DATABASE_URI: str = Field(..., env="MYSQL_DATABASE_URI")  # MySQL(异步)
     DATABASE_ECHO: bool = (
@@ -134,12 +137,12 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str | None = None
     # update type to EmailStr when sqlmodel supports it
     EMAILS_FROM_EMAIL: str | None = None
-    EMAILS_FROM_NAME: str | None = None
+    emails_from_name: str | None = None
 
     @model_validator(mode="after")
     def _set_default_emails_from(self) -> Self:
-        if not self.EMAILS_FROM_NAME:
-            self.EMAILS_FROM_NAME = self.PROJECT_NAME
+        if not self.emails_from_name:
+            self.emails_from_name = self.PROJECT_NAME
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
@@ -180,3 +183,10 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+engine = create_engine(
+    settings.DATABASE_URI, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()

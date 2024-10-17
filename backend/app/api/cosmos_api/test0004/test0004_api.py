@@ -1,11 +1,9 @@
 """ Test0004 backend """
 
 import json
-import time
 import uuid
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
-import requests
 
 from app.api.cosmos_api.test0004 import test0004_entity
 from app.cosmos import db
@@ -22,7 +20,8 @@ def cosmos_insert_chars():
     # 连接到容器
     container = db.get_container_client("chats")
     # 插入数据
-    user = test0004_entity.chats_user("user_03_1", "user3", "wangtao01", "Wang")
+    user = test0004_entity.chats_user(str(uuid.uuid4()), 
+            "user1", "user03_1", "wangtao01", "Wang", "0")
     container.create_item(body=user)
     return "用户数据插入成功!"
 
@@ -152,7 +151,8 @@ def cosmos_send_message(param: dict):
     test0004_service.insert_new_message(user)
     # except HTTPException as e:
     #     print("cosmos error")
-    #     raise HTTPException(status_code=e.status_code,detail=str(e.detail),headers=e.headers) from e
+    #     raise HTTPException(status_code=e.status_code,
+    #                           detail=str(e.detail),headers=e.headers) from e
     # except Exception as e:
     #     raise ValueError(f"Error occurred: {e}") from e
 

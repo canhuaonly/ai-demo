@@ -10,9 +10,13 @@ import { NgIf } from '@angular/common';
     imports: [NgIf],
 })
 export class ResponsiveHelperComponent implements OnInit {
-  public env: any = environment;
+  public env = environment;
 
   constructor() {}
 
   ngOnInit(): void {}
+
+  public tipsClick(): void {
+    console.log("Clicked on tips");
+  }
 }
