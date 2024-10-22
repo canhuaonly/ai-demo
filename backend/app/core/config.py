@@ -107,8 +107,11 @@ class Settings(BaseSettings):
 
     # logger
     LOGGER_DIR: str = "logs"  # 日志文件夹名
-    LOGGER_NAME: str = (
-        "ai-demo.log"  # 日志文件名  (时间格式 {time:YYYY-MM-DD_HH-mm-ss}.log)
+    LOGGER_NAME_AI_DEMO: str = (
+        "ai-demo"  # 日志文件名  (时间格式 {time:YYYY-MM-DD_HH-mm-ss}.log)
+    )
+    LOGGER_NAME_COSMOS: str = (
+        "cosmos"  # 日志文件名  (时间格式 {time:YYYY-MM-DD_HH-mm-ss}.log)
     )
     LOGGER_LEVEL: str = "DEBUG"  # 日志等级: ['DEBUG' | 'INFO']
     LOGGER_ROTATION: str = (
