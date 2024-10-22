@@ -1,4 +1,5 @@
 """ Python configuration """
+
 # -*- coding: utf-8 -*-
 
 import secrets
@@ -33,8 +34,9 @@ __version__ = "0.0.0"
 
 PROJECT_DESC = """ THIS IS FAST API DEMO """
 
+
 def parse_cors(v: Any) -> list[str] | str:
-    """ PARSE """
+    """PARSE"""
     if isinstance(v, str) and not v.startswith("["):
         return [i.strip() for i in v.split(",")]
     elif isinstance(v, list | str):
@@ -44,7 +46,8 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class Settings(BaseSettings):
-    """ 全局配置 """
+    """全局配置"""
+
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
@@ -64,7 +67,7 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[misc]
     @property
     def server_host(self) -> str:
-        """ Use HTTPS for anything other than local development """
+        """Use HTTPS for anything other than local development"""
         if self.ENVIRONMENT == "local":
             return f"http://{self.DOMAIN}"
         return f"https://{self.DOMAIN}"
@@ -150,7 +153,7 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[misc]
     @property
     def emails_enabled(self) -> bool:
-        """ EMAIL """
+        """EMAIL"""
         return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
 
     # update type to EmailStr when sqlmodel supports it
@@ -185,8 +188,6 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
-engine = create_engine(
-    settings.DATABASE_URI, connect_args={"check_same_thread": False}
-)
+engine = create_engine(settings.DATABASE_URI, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

@@ -18,6 +18,7 @@ export class Menu {
             { label: 'Test0003', route: '/dashboard/test0003' },
             { label: 'Test0004', route: '/dashboard/test0004' },
             { label: 'Test0005', route: '/dashboard/test0005' },
+            { label: 'Test0006', route: '/dashboard/test0006' },
             { label: 'cosmos-learn-v1', route: '/dashboard/cosmos-learn-v1' },
           ],
         },

@@ -1,0 +1,106 @@
+<div class="h-full flex flex-col">
+  <div class="flex flex-1 overflow-hidden">
+    <div class="w-80 p-4 rounded-lg border-solid border-2">
+      <!-- 用户信息 -->
+      <div class="flex items-center mb-4" (click)="avatarClick()">
+        <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+        <h3 class="font-bold" id="userNm">{{ userInfo.user_nm }}</h3>
+      </div>
+      <!-- thread列表 -->
+      <div class="flex flex-col space-y-2 h-full" id="threadList">
+        <div class="bg-gray-100 text-center cursor-pointer w-full">
+          <button class="bg-green-500 text-white py-2 w-full rounded-lg" (click)="addChat()" id="newChats">Add Chat</button>
+        </div>
+        <div class="flex flex-col space-y-2 h-full overflow-auto scroll-smooth scroll-top">
+        @for (item of threadList; track $index) {
+          <div 
+            class="bg-gray-100 flex items-center p-2 rounded-lg cursor-pointer border-2" 
+            id="thread{{ $index }}" 
+            [ngClass]="{'bg-blue-100': item.isSelected, 'bg-gray-100': !item.isSelected}"
+            (click)="changeTab(item)">
+            <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+            <div class="overflow-hidden">
+              <div class="flex items-center">
+                <input 
+                  [id]="item.id"
+                  [ngModel]="item.thread_title" 
+                  [ngClass]="{'pointer-events-none':!item.isEditable, 'border-none': !item.isEditable}"
+                  (ngModelChange)="item.thread_title = $event"
+                  class="rounded p-0.5 w-36 h-6 bg-inherit"
+                />
+                <!-- 编辑 -->
+                <button (click)="editThreadTitle(item)" *ngIf="!item.isEditable" class="ml-2 p-1 bg-inherit text-black rounded w-8 h-8">
+                  <svg-icon src="assets/icons/g1/icons-edit.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
+                </button>
+                <!-- 删除 -->
+                <button (click)="deleteThread(item, $event)" *ngIf="!item.isEditable" class="p-1 bg-inherit text-black rounded w-8 h-8">
+                  <svg-icon src="assets/icons/g1/icons-delete.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
+                </button>
+                <!-- 保存 -->
+                <button (click)="saveThreadTitle(item)" *ngIf="item.isEditable" class="ml-2 p-1 bg-inherit text-black rounded w-8 h-8">
+                  <svg-icon src="assets/icons/g1/icons-correct.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
+                </button>
+                <!-- 取消 -->
+                <button (click)="cancelEdit(item)" *ngIf="item.isEditable" class="p-1 bg-inherit text-black w-8 h-8 rounded">
+                  <svg-icon src="assets/icons/g1/icons-wrong.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
+                </button>
+              </div>
+              <p class="w-36 overflow-hidden overflow-ellipsis text-gray-500 text-sm whitespace-nowrap">{{item.last_question || 'No questions yet'}}</p>
+              <!-- <p class="text-gray-500 text-xs whitespace-nowrap">{{item.last_question_timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</p> -->
+            </div>
+          </div>
+        }
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 p-4" id="contentContainer">
+      @if (selected_thread_id) {
+        <!-- 聊天标题栏 -->
+        <div class="flex items-center mb-4">
+          <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+          <div>
+            <h3 class="font-bold">{{ selected_thread_title }}</h3>
+            <p class="text-gray-500 text-sm">💚Online</p>
+          </div>
+        </div>
+        <!-- 聊天消息列表 -->
+        <div #scrollMe class="flex flex-col space-y-4 h-[75%] overflow-auto scroll-smooth scroll-top p-4" id="messageList">
+          @for (item of message_list; track $index) {
+            <div class="flex justify-end items-start">
+              <div class="bg-blue-600 text-white p-2 rounded-lg ml-24 code123" [innerHTML]="item.message_question_md"></div>
+              <img src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="Avatar" class="w-10 h-10 rounded-full ml-2">
+            </div>
+            <div class="flex items-start">
+              <img src="https://via.placeholder.com/50/f60/fff?text=AI" alt="Avatar" class="w-10 h-10 rounded-full mr-2">
+              <div class="bg-white text-gray-600 p-2 rounded-lg mr-24" [innerHTML]="item.message_answer_md || '' | markdown" id="message_answer_md{{ $index }}"></div>
+            </div>
+            <!-- 中断按钮 -->
+            <div *ngIf="$index === message_list.length - 1" class="flex items-center">
+              <div class="w-8 h-8 rounded-full mr-2"></div>
+              <div>
+                <button *ngIf="sending" (click)="abort()">
+                  <svg-icon src="assets/icons/g1/icons-stop.svg" [svgClass]="'h-6 w-6'"> </svg-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+        <!-- 消息发送输入框 -->
+          <div class="flex flex-row space-y-4 h-36 overflow-auto scroll-smooth scroll-top p-4">
+            <textarea placeholder="Type your message..." class="w-[calc(100%-80px)] border-gray-300 border rounded-lg py-2 px-4 mr-2 resize-none" [(ngModel)]="question_input" id="question_input" (keydown)="sendOrLine($event)"></textarea>
+              <div class="flex items-end justify-end">
+                <button class="bg-blue-600 text-white py-2 px-4 rounded-lg disabled:opacity-50 hover:bg-blue-800 w-20 h-10" (click)="send()" id="send" [disabled]="!question_input || sending">
+                  <span *ngIf="!sending">Send</span>
+                  <span *ngIf="sending">...</span>
+                </button>
+              </div>
+          </div>
+      }
+      @else {
+        <div class="w-full px-2 py-6 text-center">
+          <span class="text-gray-500 text-2xl whitespace-nowrap">暂无聊天记录，点击左侧对话者，开始聊天！</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>
